@@ -15,7 +15,7 @@ liest dort nach, bevor er sie wegmerged.
 > §2 hießen upstream `grilling`, `grill-me` und `grill-with-docs`; hier heißen
 > sie `sharpen*`. Damit war die einzige Spur weg, die am Dateinamen ablesbar
 > gewesen wäre, und der zweite Upstream fehlte in dieser Datei von ihrem ersten
-> Tag an (`c1e7d9e`, 26.07.2026) bis zum 04.08.2026.
+> Tag an (Import am 26.07.2026) bis zum 04.08.2026.
 > `domain-modeling` und `teach` heißen unverändert wie upstream — dort war die
 > Herkunft die ganze Zeit sichtbar. Wer künftig etwas beim Import umbenennt,
 > trägt es **in derselben Sitzung** hier ein.
@@ -49,16 +49,12 @@ dazu inhaltliche Ergänzungen und Kürzungen.
 Pfade relativ zu `plugin/skills/dev/`. Drei Stufen, nach verbliebenem
 Upstream-Anteil.
 
-> **Zwei Messungen, die nicht dasselbe sagen.** Der Import-Commit `c1e7d9e`
-> trug die Anpassungen oben bereits — er ist kein unveränderter Upstream-Stand.
-> Deshalb misst
->
-> ```bash
-> git diff --numstat c1e7d9e -- plugin/skills/dev/<datei>   # Drift seit dem Import
-> ```
->
-> nur, was **seither** passiert ist, nicht den Abstand zum Upstream. Den liefert
-> erst der Vergleich gegen den Anker:
+> **Gemessen wird gegen den Anker, nicht gegen die eigene History.** Die
+> Dateien trugen die Anpassungen oben schon beim Import — ein Diff gegen einen
+> Stand dieses Repos misst deshalb nie den Abstand zum Upstream, und die History
+> dieses Repos ist ohnehin nicht garantiert
+> ([`0026`](../docs/decisions/0026-notice-anchors-upstream-not-own-history.md)).
+> Den Abstand liefert nur der Vergleich gegen den Anker:
 >
 > ```bash
 > git clone --filter=blob:none https://github.com/obra/superpowers.git /tmp/sp
@@ -68,9 +64,8 @@ Upstream-Anteil.
 >
 > `--strip-trailing-cr`, weil `.gitattributes` hier LF erzwingt und der Klon
 > unter Windows CRLF auscheckt — ohne das Flag meldet `diff` jede Zeile als
-> geändert. **Die Stufe richtet sich nach der zweiten Messung**, nicht nach der
-> ersten: `brainstorming/SKILL.md` steht bei 54−/7+ seit dem Import, aber bei
-> 45−/81+ gegen v6.2.0.
+> geändert. **Die Stufe richtet sich nach diesem Vergleich** —
+> `brainstorming/SKILL.md` steht bei 45−/81+ gegen v6.2.0.
 
 > **Der häufigste Grund für Drift** in ursprünglich wörtlich übernommenen
 > Dateien: Die vier Lesestellen für `docs/decisions/` (`0005`) und das
@@ -80,7 +75,9 @@ Upstream-Anteil.
 
 ### Unverändert übernommen
 
-Seit dem Import keine Zeile geändert.
+Seit dem Import keine Zeile geändert, Stand der Veröffentlichung am 15.09.2026.
+Gegen den Anker ist das nicht nachprüfbar, weil der Import die Anpassungen oben
+schon trug. Ändert sich eine dieser Dateien, meldet `sync-plugin-docs` das.
 
 | Datei | Upstream-Herkunft |
 |---|---|
@@ -187,8 +184,8 @@ SOFTWARE.
 
 **Dieser Anker ist gesetzt, nicht rekonstruiert.** Anders als bei superpowers
 gibt es hier keinen Import-Commit: Alle fünf Skills betreten ihren heutigen Pfad
-gemeinsam mit `8ee2d00` („Plugin nach `plugin/` verschieben", 26.07.2026), einem
-Verschiebe-Commit. Der erste Commit dieses Repos ist vom 24.07.2026, der Upstream
+gemeinsam mit einem Verschiebe-Commit („Plugin nach `plugin/` verschieben",
+26.07.2026). Der erste Commit dieses Repos ist vom 24.07.2026, der Upstream
 ist älter (erster Commit 03.02.2026) — der tatsächliche Ausgangsstand ist damit
 weder aus der History noch aus den Daten zu klären. Der Commit oben ist ein
 **Vergleichspunkt für die Zukunft**, keine Herkunftsbehauptung über die
@@ -285,12 +282,14 @@ Eigene Skills — beim Abgleich mit §1 und §2 gar nicht erst zu betrachten.
 `proad-job-report`, `sync-solution-items`, `personal/whats-for-lunch`,
 `personal/lap-training`.
 
-```bash
-git ls-tree --name-only c1e7d9e^ plugin/skills/dev/ plugin/skills/personal/
-```
+**Die erste Liste ist abgeschlossen.** Kein Skill wird nachträglich älter als
+der Import — ein neuer eigener Skill gehört immer unter *Danach entstanden*.
+Gezogen wurde die Trennung gegen die History vor der Veröffentlichung, die nicht
+mehr Teil dieses Repos ist
+([`0026`](../docs/decisions/0026-notice-anchors-upstream-not-own-history.md)).
 
-**Was dieses Kommando beweist und was nicht.** Es trennt die beiden Listen
-oben — mehr nicht. „Älter als der superpowers-Import" hieß in der ersten
+**Was die Trennung beweist und was nicht.** Sie sagt, wann ein Skill entstand —
+mehr nicht. „Älter als der superpowers-Import" hieß in der ersten
 Fassung dieser Datei *ohne Upstream*, und genau daran ist §2 von Anfang an
 vorbeigelaufen: Die fünf Pocock-Skills sind ebenfalls älter als der Import.
 Wer einen Skill hier einträgt, prüft ihn **gegen beide Upstreams**, nicht

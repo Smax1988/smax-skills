@@ -110,27 +110,11 @@ you did not change are not your subject, however close their rows sit. Whether
 the classification still holds is the user's judgement, so report it and do not
 rewrite it (`docs/decisions/0019-write-sourced-present-the-rest.md`).
 
-**A drift number only exists for NOTICE §1.** Those files came in through the
-import commit, so:
-
-```bash
-git diff --numstat c1e7d9e -- <full path>   # NOTICE §1 files only
-```
-
-**No second ref in that command.** `c1e7d9e HEAD` would measure import against
-the last commit — and this skill runs *before* the commit, so the very change
-you are reporting on sits in the worktree and would be left out. On a borderline
-reclassification those are the lines that decide.
-
-**And say what the number measures: drift since the import, not distance from
-the upstream.** The import commit already carried the `smax:` adaptations, so
-the two differ — NOTICE §1 names both measurements and says the bucket follows
-the second one. Never present a `numstat` as though it settled a
-reclassification.
-
-**NOTICE §2 files have no import commit at all** — they predate it. There is no
-cheap local measurement for them; the comparison needs a clone, and this skill
-does not clone. Report the bucket, name the file, and stop there.
+**The entry is the pair and the file — no number.** For NOTICE §1 and §2 alike,
+whether the classification still holds is measured against the upstream anchor
+in a separate clone, and this skill does not clone. Report the bucket, name the
+file, and stop there
+(`docs/decisions/0026-notice-anchors-upstream-not-own-history.md`).
 
 No hit at all means no entry exists — the one case `grep` structurally cannot
 show you. §5 says what to do with it, and with a deleted skill; read §5 whenever
@@ -213,10 +197,10 @@ below.
 | §2.2 membership | the same | membership **write**, surrounding sentence **ask** |
 | §4 *Läuft ohnehin von selbst*, who belongs | **none** | **ask** |
 | §4 *Geht gar nicht per Modell*, who belongs | `disable-model-invocation:` | membership **write**, text **ask** |
-| NOTICE: has a file left its bucket? | `git diff --numstat c1e7d9e -- <file>`, §1 only | **report** |
+| NOTICE: a file in a bucket has changed | `git diff --name-only <base>` + the lookup in NOTICE | **report** |
 | NOTICE: **which** upstream section and bucket it belongs in | — | **ask** |
 | NOTICE §3 *Ohne Upstream-Herkunft*, membership | **none** | **ask** |
-| NOTICE §3, which of its two lists a member goes in | `git ls-tree c1e7d9e^` | **write** |
+| NOTICE §3, which of its two lists a member goes in | *Älter als der Import* is closed — a new member can only join *Danach entstanden* | **write** |
 | §3 entry table | **none** | **ask** |
 | §1 prose, §4 judgements, the satellite paragraphs, §6.x | **none** | **ask** |
 

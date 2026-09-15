@@ -22,6 +22,9 @@ look up. Two borderline cases where the other two criteria turn the wrong way:
 the judgements in §4, the satellite paragraphs, §6.x, and in `plugin/NOTICE.md`
 the question of *which* bucket a file belongs in. That it has left its bucket, by
 contrast, is evidenced — `git diff --numstat` against the import commit says so.
+*(Superseded: the import commit is gone; that a file in a bucket changed is now
+evidenced by the diff against the comparison base —
+[[0026-notice-anchors-upstream-not-own-history]].)*
 
 **The failure mode this is built against** is silently written prose: plausibly
 worded, in the author's voice, and unnoticeable while skimming a supposedly

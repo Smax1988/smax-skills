@@ -469,6 +469,32 @@ Erst die Fix-Welle schob eine Controller-Aufgabe in einen Implementer.
       `subagent-driven-development` beschrieben ist oder ausdrücklich als
       unzulässig verworfen wurde.
 
+### 6.7 · `sync-plugin-docs`: Vorschlag für eine Zelle einer Zeile, die es nicht gibt
+
+**Der Fall:** Ein neuer Command-Skill braucht eine Zeile in einer der drei
+`dev`-Tabellen in README §5. Welche Tabelle, hat keine Quelle — die Zeile wird
+deshalb richtig *nicht* angelegt und landet unter *Gemeldet*. Ihre Zelle
+*Argumente* hat dagegen einen Wert (`argument-hint:`), und der Lauf legt sie
+unter *Zu übernehmen* vor, mit `alt: (leer — Zeile existiert noch nicht)`.
+
+**Warum das ein Problem ist:** Ein „j" auf diesen Eintrag lässt sich nicht
+ausführen — es gibt keine Zeile, in die der Wert käme. §7 regelt nur die neue
+Zeile, die *angelegt* wird (Zeile rein, quellenlose Zellen leer, Entwurf in den
+Report); die zurückgehaltene Zeile regelt es nicht. Beobachtet am 15.09.2026 in
+zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
+`0026` — der Umbau hat damit nichts zu tun.
+
+**Optionen, noch nicht bewertet:**
+
+- Die Zell-Vorschläge hängen am *Gemeldet*-Eintrag der Zeile, ohne eigene Nummer
+  und ohne `[j/n]` — sie werden erst beantwortbar, wenn die Tabelle feststeht.
+- Der *Zu übernehmen*-Eintrag bleibt, bekommt aber eine Abhängigkeit
+  („setzt Antwort auf 3 voraus").
+
+- [ ] **6.7.1** Regel in §7 von `sync-plugin-docs` ergänzen. Erledigt ist es,
+      wenn §7 den Fall der zurückgehaltenen Zeile benennt und ein Lauf mit einem
+      neuen Command-Skill keinen unausführbaren `[j/n]`-Eintrag mehr erzeugt.
+
 ---
 
 ## 5 · Kleinkram
