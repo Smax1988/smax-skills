@@ -1,0 +1,37 @@
+## C# — VS Dark+ syntax highlighting (Smax)
+syntax csharp "\.csx?$"
+comment "//"
+
+## Type / class names (PascalCase)
+color #4cb "\<[A-Z][A-Za-z0-9_]*\>"
+
+## Function / method calls:  name(
+color #dda "[A-Za-z_][A-Za-z0-9_]*[[:space:]]*(\()"
+
+## Declarations / modifiers / storage keywords
+color #59c "\<(abstract|as|base|const|delegate|event|explicit|extern|fixed|implicit|internal|operator|out|override|params|partial|private|protected|public|readonly|ref|sealed|static|this|unsafe|virtual|volatile|class|record|struct|enum|interface|var|new|get|set|init|value|where|nameof|global|scoped|required|file|typeof|sizeof|default|async)\>"
+
+## Built-in value types
+color #59c "\<(bool|byte|char|decimal|double|dynamic|float|int|long|nint|nuint|object|sbyte|short|string|uint|ulong|ushort|void)\>"
+
+## Control flow
+color #c8c "\<(if|else|switch|case|for|foreach|do|while|goto|try|catch|finally|checked|unchecked|lock|in|is|stackalloc|return|break|continue|throw|yield|await|using|namespace|when|and|or|not)\>"
+
+## Boolean / null constants
+color #59c "\<(true|false|null)\>"
+
+## Numbers (decimal, float, hex, binary, digit separators)
+color #bca "\<([0-9][0-9_]*\.?[0-9_]*([eE][-+]?[0-9]+)?[fFdDmMlLuU]*|0[xX][[:xdigit:]_]+|0[bB][01_]+)\>"
+
+## Attributes  [Something]
+color #4cb "^[[:space:]]*\[[A-Za-z][^]]*\]"
+
+## Preprocessor directives
+color #888 "^[[:space:]]*#[[:space:]]*[a-z]+.*"
+
+## Strings & chars
+color #c97 ""([^"\]|\\.)*"|'([^'\]|\\.)*'|`([^`\]|\\.)*`"
+
+## Comments
+color #6a5 "(^|[[:blank:]])//.*"
+color #6a5 start="/\*" end="\*/"

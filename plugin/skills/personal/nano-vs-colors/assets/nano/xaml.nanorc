@@ -1,0 +1,24 @@
+## XAML / Avalonia (WPF, UWP, MAUI) — VS Dark+ (Smax)
+syntax xaml "\.a?xaml$"
+
+## Processing instructions / declaration
+color #888 "<\?[^?]*\?>"
+## CDATA sections
+color #6a5 start="<!\[CDATA\[" end="\]\]>"
+
+## Tag delimiters
+color #888 "</?|/?>"
+## Tag names (incl. Foo.Bar attached-property syntax)
+color #59c "</?[A-Za-z_][A-Za-z0-9_:.-]*"
+## Attribute names (incl. x:, xmlns:, attached props)
+color #9df "[A-Za-z_][A-Za-z0-9_:.-]*="
+## Attribute values / strings
+color #c97 ""[^"]*"|'[^']*'"
+
+## Markup extensions  {Binding ...}  {StaticResource ...}  {x:Type ...}
+color #4cb "\{/?[A-Za-z][A-Za-z0-9:.]* ?[^{}]*\}"
+## Entities
+color #dda "&[A-Za-z#][A-Za-z0-9]*;"
+
+## Comments
+color #6a5 start="<!--" end="-->"

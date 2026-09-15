@@ -1,0 +1,77 @@
+## ~/.nanorc — VS Dark+ syntax highlighting for Git-Bash nano
+## Installed by the nano-vs-colors skill.
+##
+## Layout:
+##   ~/.nano/*.nanorc        — custom syntaxes (C#, PowerShell, XML, XAML,
+##                             SCSS, Batch, Razor/Blazor, TypeScript, Go)
+##   the extendsyntax block  — recolours nano's BUILT-IN json / javascript /
+##                             html / css to the same palette.
+##
+## Palette (VS Dark+ -> nano 3-digit hex):
+##   comment #6a5   keyword #59c   control #c8c   type #4cb
+##   function #dda  variable #9df  number #bca    string #c97   dim #888
+
+## Load nano's stock syntaxes first (needed by the extendsyntax overrides
+## below). Harmless if /etc/nanorc already loaded them — nano does not warn
+## on re-include.
+include "/usr/share/nano/*.nanorc"
+
+## Load the custom syntaxes. nano expands ~ here, so this works for any user.
+include "~/.nano/*.nanorc"
+
+## --- Editor behaviour ---
+set tabsize 4
+set tabstospaces
+set autoindent
+set linenumbers
+set constantshow
+set softwrap
+set zap
+set mouse
+
+## --- UI colours ---
+set numbercolor #888
+set titlecolor bold,white,blue
+set statuscolor bold,white,green
+set errorcolor bold,white,red
+
+## ============================================================
+## VS Dark+ recolouring of the BUILT-IN syntaxes (json, javascript,
+## html, css). extendsyntax is ONLY allowed in a top-level rcfile
+## (this one), never in an included file, and the base syntaxes must
+## already be loaded (they are, via the include above).
+## ============================================================
+
+## --- JavaScript ---
+extendsyntax javascript color #4cb "\<[A-Z][A-Za-z0-9_]*\>"
+extendsyntax javascript color #dda "[A-Za-z_$][A-Za-z0-9_$]*[[:space:]]*(\()"
+extendsyntax javascript color #59c "\<(async|class|const|extends|function|let|var|static|get|set|super|this|enum|debugger|public|private|protected|readonly|abstract|implements|interface|new)\>"
+extendsyntax javascript color #c8c "\<(if|else|switch|case|default|for|do|while|with|in|of|try|catch|finally|return|break|continue|yield|throw|await|import|export|from|delete|instanceof|typeof|void)\>"
+extendsyntax javascript color #59c "\<(true|false|null|undefined|NaN|Infinity)\>"
+extendsyntax javascript color #bca "\<([0-9]+\.?[0-9]*([eE][-+]?[0-9]+)?|0x[[:xdigit:]]+)\>"
+extendsyntax javascript color #c97 ""([^"\]|\\.)*"|'([^'\]|\\.)*'|`([^`\]|\\.)*`"
+extendsyntax javascript color #6a5 "(^|[[:blank:]])//.*"
+extendsyntax javascript color #6a5 start="/\*" end="\*/"
+
+## --- JSON ---
+extendsyntax json color #c97 ""([^"\]|\\.)*""
+extendsyntax json color #9df ""([^"\]|\\.)*"[[:space:]]*:"
+extendsyntax json color #bca "\<-?[0-9]+\.?[0-9]*([eE][-+]?[0-9]+)?\>"
+extendsyntax json color #59c "\<(true|false|null)\>"
+
+## --- HTML ---
+extendsyntax html color #888 "</?|/?>"
+extendsyntax html color #59c "</?[A-Za-z][A-Za-z0-9-]*"
+extendsyntax html color #9df "[A-Za-z_-][A-Za-z0-9_:-]*="
+extendsyntax html color #c97 ""[^"]*"|'[^']*'"
+extendsyntax html color #dda "&[A-Za-z#][A-Za-z0-9]*;"
+extendsyntax html color #6a5 start="<!--" end="-->"
+
+## --- CSS ---
+extendsyntax css color #c8c "@[A-Za-z-]+"
+extendsyntax css color #9df "\<[A-Za-z-]+[[:space:]]*:"
+extendsyntax css color #dda "[.#][A-Za-z_-][A-Za-z0-9_-]*"
+extendsyntax css color #bca "\<[0-9]+\.?[0-9]*(px|em|rem|%|vh|vw|pt|deg|s|ms|fr)?\>"
+extendsyntax css color #c97 "#[0-9A-Fa-f]{3,8}\>"
+extendsyntax css color #c97 ""[^"]*"|'[^']*'"
+extendsyntax css color #6a5 start="/\*" end="\*/"

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{SUBJECT}}</title>
+<style>
+  :root { color-scheme: light; }
+  body {
+    margin: 0;
+    background: #eceef1;
+    color: #1c1e21;
+    font: 14px/1.5 "Segoe UI", system-ui, sans-serif;
+  }
+  .wrap { max-width: 760px; margin: 32px auto; padding: 0 16px; }
+  header {
+    background: #fff; border: 1px solid #d5d9df; border-bottom: 0;
+    border-radius: 8px 8px 0 0; padding: 14px 18px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #6b7280; }
+  .subject { flex: 1 1 240px; font-weight: 600; font-size: 15px; word-break: break-word; }
+  .bar {
+    background: #f7f8fa; border: 1px solid #d5d9df; border-top: 0; border-bottom: 0;
+    padding: 10px 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .hint { font-size: 12px; color: #6b7280; }
+  .btn {
+    font: inherit; font-size: 13px; line-height: 1;
+    padding: 8px 14px; border-radius: 6px; cursor: pointer;
+    border: 1px solid #2563eb; background: #2563eb; color: #fff;
+  }
+  .btn:hover { background: #1d4ed8; border-color: #1d4ed8; }
+  .btn.ghost { background: #fff; color: #374151; border-color: #d5d9df; }
+  .btn.ghost:hover { background: #f3f4f6; }
+  .btn.done { background: #15803d; border-color: #15803d; color: #fff; }
+  /* The mail sheet mirrors Outlook's default body style so the preview matches
+     what the recipient sees. The copy button ships clean markup, not these
+     styles - see copyRich(). */
+  .sheet {
+    background: #fff; border: 1px solid #d5d9df; border-radius: 0 0 8px 8px;
+    padding: 22px 24px 26px;
+    font-family: Aptos, Calibri, "Segoe UI", sans-serif;
+    font-size: 11pt; line-height: 1.45; color: #000;
+  }
+  .sheet p { margin: 0 0 .8em; }
+  .sheet p:last-child { margin-bottom: 0; }
+  .sheet ul, .sheet ol { margin: 0 0 .8em; padding-left: 1.5em; }
+  .sheet li { margin-bottom: .25em; }
+  .sheet a { color: #0563c1; }
+  .sheet table { border-collapse: collapse; margin: 0 0 .8em; }
+  .sheet th, .sheet td { border: 1px solid #000; padding: 4px 8px; text-align: left; }
+  .sheet th { font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="label">Betreff</span>
+    <span class="subject" id="subject">{{SUBJECT}}</span>
+    <button class="btn ghost" id="copySubject" type="button">Betreff kopieren</button>
+  </header>
+  <div class="bar">
+    <button class="btn" id="copyBody" type="button">Mail kopieren</button>
+    <span class="hint">Kopieren, dann in Outlook mit Strg+V einf&uuml;gen. Outlook setzt seine eigene Schrift &mdash; Fett, Listen und Links bleiben.</span>
+  </div>
+  <main class="sheet" id="mailbody">
+{{BODY}}
+  </main>
+</div>
+<script>
+(function () {
+  function flash(btn, text) {
+    var original = btn.dataset.label || btn.textContent;
+    btn.dataset.label = original;
+    btn.textContent = text;
+    btn.classList.add('done');
+    setTimeout(function () {
+      btn.textContent = original;
+      btn.classList.remove('done');
+    }, 1600);
+  }
+
+  function inlineText(el) {
+    var out = '';
+    el.childNodes.forEach(function (n) {
+      if (n.nodeType === 3) { out += n.textContent; return; }
+      if (n.nodeType !== 1) return;
+      var tag = n.tagName.toLowerCase();
+      if (tag === 'br') { out += '\n'; return; }
+      if (tag === 'a') {
+        var label = n.textContent.trim();
+        var href = n.getAttribute('href') || '';
+        var bare = href.replace(/^mailto:/, '');
+        out += (href && bare !== label) ? label + ' (' + bare + ')' : label;
+        return;
+      }
+      out += inlineText(n);
+    });
+    return out.replace(/[ \t]+/g, ' ').replace(/ ?\n ?/g, '\n').trim();
+  }
+
+  function plainText(root) {
+    var parts = [];
+    root.childNodes.forEach(function (n) {
+      if (n.nodeType === 3) {
+        var t = n.textContent.trim();
+        if (t) parts.push(t);
+        return;
+      }
+      if (n.nodeType !== 1) return;
+      var tag = n.tagName.toLowerCase();
+      if (tag === 'ul' || tag === 'ol') {
+        var i = 1;
+        var rows = [];
+        n.querySelectorAll(':scope > li').forEach(function (li) {
+          rows.push((tag === 'ol' ? (i++) + '. ' : '- ') + inlineText(li));
+        });
+        if (rows.length) parts.push(rows.join('\n'));
+        return;
+      }
+      if (tag === 'table') {
+        var rows = [];
+        n.querySelectorAll('tr').forEach(function (tr) {
+          var cells = [];
+          tr.querySelectorAll('th, td').forEach(function (cell) {
+            cells.push(inlineText(cell));
+          });
+          rows.push(cells.join(' | '));
+        });
+        if (rows.length) parts.push(rows.join('\n'));
+        return;
+      }
+      var line = inlineText(n);
+      if (line) parts.push(line);
+    });
+    return parts.join('\n\n');
+  }
+
+  // Fallback for browsers that refuse the async clipboard on file:// URLs.
+  // Carries the sheet's computed styles along - acceptable, not preferred.
+  function selectAndCopy(el) {
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    return ok;
+  }
+
+  async function copyRich(el, btn) {
+    var html = el.innerHTML.trim();
+    var text = plainText(el);
+    try {
+      await navigator.clipboard.write([new ClipboardItem({
+        'text/html': new Blob([html], { type: 'text/html' }),
+        'text/plain': new Blob([text], { type: 'text/plain' })
+      })]);
+      flash(btn, 'Kopiert');
+    } catch (e) {
+      flash(btn, selectAndCopy(el) ? 'Kopiert' : 'Bitte manuell markieren');
+    }
+  }
+
+  async function copyPlain(text, btn) {
+    try {
+      await navigator.clipboard.writeText(text);
+      flash(btn, 'Kopiert');
+    } catch (e) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+      document.body.removeChild(ta);
+      flash(btn, ok ? 'Kopiert' : 'Bitte manuell markieren');
+    }
+  }
+
+  var body = document.getElementById('mailbody');
+  var subject = document.getElementById('subject');
+  document.getElementById('copyBody').addEventListener('click', function () {
+    copyRich(body, this);
+  });
+  document.getElementById('copySubject').addEventListener('click', function () {
+    copyPlain(subject.textContent.trim(), this);
+  });
+})();
+</script>
+</body>
+</html>

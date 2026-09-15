@@ -1,0 +1,36 @@
+## PowerShell — VS Dark+ syntax highlighting (Smax)
+syntax powershell "\.ps(m|d)?1$"
+comment "#"
+
+## Cmdlets  Verb-Noun
+color #dda "\<[A-Z][a-zA-Z]+-[A-Z][a-zA-Z]+\>"
+
+## Method / property access  .Name
+color #dda "\.[A-Za-z_][A-Za-z0-9_]*"
+
+## Declarations / keywords
+icolor #59c "\<(function|filter|workflow|configuration|class|enum|param|begin|process|end|dynamicparam|using|namespace|module|static|hidden)\>"
+
+## Control flow
+icolor #c8c "\<(if|elseif|else|switch|foreach|for|while|do|until|try|catch|finally|trap|in|return|break|continue|throw|exit)\>"
+
+## Comparison / logical operators  -eq -like -match ...
+icolor #59c "[[:space:]]-(eq|ne|gt|ge|lt|le|like|notlike|match|notmatch|contains|notcontains|in|notin|is|isnot|and|or|not|xor|band|bor|bxor|bnot|shl|shr|join|split|replace|f|as)\>"
+
+## Type accelerators  [string] [int] [System.IO.File]
+color #4cb "\[[A-Za-z_][A-Za-z0-9_.]*\]"
+
+## Numbers (with optional KB/MB/GB/TB suffix)
+color #bca "\<([0-9]+\.?[0-9]*([eE][-+]?[0-9]+)?)([kKmMgGtT][bB])?\>"
+
+## Scoped variables  $env:PATH  $script:foo
+color #9df "\$(global|script|local|private|env|using|workflow):[A-Za-z_][A-Za-z0-9_]*"
+## Variables  $var  ${var}  $_ $? $^
+color #9df "\$([A-Za-z_][A-Za-z0-9_]*|\{[^}]*\}|[$?^_])"
+
+## Strings (double-quoted with backtick escape, and single-quoted)
+color #c97 ""([^"]|`.)*"|'[^']*'"
+
+## Comments
+color #6a5 "(^|[[:blank:]])#.*"
+color #6a5 start="<#" end="#>"

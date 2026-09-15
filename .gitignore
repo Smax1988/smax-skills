@@ -1,0 +1,8 @@
+# Persönliche Meeting-/Strategie-Notizen — nicht Teil des Plugins
+PLUGIN-STRATEGY.md
+
+# Marker, die Claude Code ins geladene Plugin-Verzeichnis schreibt.
+# Entstehen hier, weil das Plugin bei einer lokalen directory-Quelle direkt
+# aus dem Repo bedient wird statt aus einer Cache-Kopie (siehe README 5.1).
+plugin/.in_use/
+plugin/.orphaned_at

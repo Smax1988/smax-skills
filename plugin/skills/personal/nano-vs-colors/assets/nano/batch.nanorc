@@ -1,0 +1,31 @@
+## Batch / CMD (.bat, .cmd) — VS Dark+ (Smax)
+syntax batch "\.(bat|cmd)$"
+
+## Labels  :label
+color #4cb "^[[:space:]]*:[A-Za-z0-9_.-]+"
+
+## Control flow / operators
+icolor #c8c "\<(if|else|for|in|do|goto|call|exit|setlocal|endlocal|shift|pushd|popd|start|not|exist|defined|errorlevel|equ|neq|lss|leq|gtr|geq)\>"
+
+## Common commands
+icolor #59c "\<(echo|set|cd|chdir|dir|copy|xcopy|robocopy|move|del|erase|md|mkdir|rd|rmdir|ren|rename|type|find|findstr|sort|more|pause|cls|color|title|ver|verify|vol|path|prompt|assoc|ftype|attrib|net|reg|sc|wmic|tasklist|taskkill|ping|ipconfig|where|choice|timeout|date|time|mode|chcp|powershell|pwsh|cmd)\>"
+
+## Variables  %var%  !var!  %~dp0  %1  %%i
+color #9df "%[A-Za-z_][A-Za-z0-9_]*%"
+color #9df "![A-Za-z_][A-Za-z0-9_]*!"
+color #9df "%~[a-zA-Z]*[0-9]"
+color #9df "%%?[A-Za-z0-9]"
+color #9df "%[0-9*]"
+
+## Switches  /X
+color #4cb "[[:space:]]/[A-Za-z?][A-Za-z0-9]*"
+
+## Numbers
+color #bca "\<[0-9]+\>"
+
+## Strings
+color #c97 ""[^"]*""
+
+## Comments  REM  and  ::
+icolor #6a5 "^[[:space:]]*rem\>.*"
+color #6a5 "^[[:space:]]*::.*"

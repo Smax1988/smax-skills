@@ -1,0 +1,35 @@
+## SCSS / Sass — VS Dark+ (Smax)
+syntax scss "\.s[ac]ss$"
+comment "//"
+
+## At-rules  @mixin @include @if @each @function @use @media ...
+color #c8c "@[A-Za-z-]+"
+
+## SCSS variables  $var  and CSS custom properties  --var
+color #9df "\$[A-Za-z_-][A-Za-z0-9_-]*"
+color #9df "\-\-[A-Za-z_-][A-Za-z0-9_-]*"
+
+## Property names  foo:
+color #9df "\<[A-Za-z-]+[[:space:]]*:"
+
+## Selectors  #id  .class  &  %placeholder
+color #dda "[.#%&][A-Za-z_-][A-Za-z0-9_-]*"
+
+## Numbers with units
+color #bca "\<[0-9]+\.?[0-9]*(px|em|rem|ex|ch|vw|vh|vmin|vmax|%|pt|pc|cm|mm|in|deg|rad|turn|s|ms|fr|dpi)?\>"
+
+## Hex colours
+color #c97 "#[0-9A-Fa-f]{3,8}\>"
+
+## Functions  name(
+color #dda "[A-Za-z_-]+[[:space:]]*(\()"
+
+## Flags  !important !default !global
+color #c8c "![A-Za-z]+"
+
+## Strings
+color #c97 ""[^"]*"|'[^']*'"
+
+## Comments
+color #6a5 "(^|[[:blank:]])//.*"
+color #6a5 start="/\*" end="\*/"

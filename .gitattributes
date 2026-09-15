@@ -1,0 +1,11 @@
+# Normalize every text file to LF in the repo AND in the working tree on all
+# platforms (Windows, Git-Bash, Linux, macOS). Guarantees byte-identical files
+# across machines — no CRLF/LF churn, and nano rc-files / YAML frontmatter stay
+# valid wherever the repo is cloned. No binary files are tracked here.
+* text=auto eol=lf
+
+# Ausnahme: cmd.exe-Batch. LF-Zeilenenden sind dort nur solange harmlos, wie
+# das Skript keine Labels/goto und keine mehrzeiligen Blöcke enthält — sobald
+# doch, parst cmd.exe falsch. CRLF erzwingen, dann ist die Frage erledigt.
+*.bat text eol=crlf
+*.cmd text eol=crlf

@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&lt;Model&gt; — data model</title>
+<style>
+:root{
+  --paper:#ECEFF2; --surface:#FFFFFF; --surface-2:#F5F7F9; --surface-3:#EDF1F4;
+  --ink:#16212B; --ink-soft:#41525E; --muted:#6D7C88;
+  --rule:#C9D3DA; --rule-soft:#DFE6EB;
+  --a:#22618E; --a-fill:#DCE8F1; --zone:#8FA3B0;
+  --pk:#9A5B12; --pk-bg:#F6E7D2;
+  --fk:#1D6087; --fk-bg:#D8E7F0;
+  --lk:#256B57; --lk-bg:#D6EBE2;
+  --rf:#63459B; --rf-bg:#E4DCF3;
+  --rv:#6D7C88; --rv-bg:#E4E9ED;
+  --font-ui:"Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-mono:"Cascadia Mono",Consolas,"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E161D; --surface:#151F28; --surface-2:#1A252F; --surface-3:#1F2C37;
+    --ink:#DFE7ED; --ink-soft:#B2C0CB; --muted:#87979F;
+    --rule:#2B3A46; --rule-soft:#22303B;
+    --a:#7DB2D8; --a-fill:#1A3346; --zone:#4A5D6B;
+    --pk:#E3A867; --pk-bg:#3A2C17;
+    --fk:#7DB2D8; --fk-bg:#16303F;
+    --lk:#6FBFA4; --lk-bg:#153029;
+    --rf:#B49BE0; --rf-bg:#291F3D;
+    --rv:#8FA0AA; --rv-bg:#222D36;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E161D; --surface:#151F28; --surface-2:#1A252F; --surface-3:#1F2C37;
+  --ink:#DFE7ED; --ink-soft:#B2C0CB; --muted:#87979F;
+  --rule:#2B3A46; --rule-soft:#22303B;
+  --a:#7DB2D8; --a-fill:#1A3346; --zone:#4A5D6B;
+  --pk:#E3A867; --pk-bg:#3A2C17;
+  --fk:#7DB2D8; --fk-bg:#16303F;
+  --lk:#6FBFA4; --lk-bg:#153029;
+  --rf:#B49BE0; --rf-bg:#291F3D;
+  --rv:#8FA0AA; --rv-bg:#222D36;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-ui);line-height:1.55}
+
+/* ---------- Header ---------- */
+header{padding:1.8rem 1.5rem .8rem;position:relative}
+h1{font-size:1.5rem;margin:0 0 .3rem;letter-spacing:-.01em;max-width:60ch}
+.sub{color:var(--ink-soft);margin:0;max-width:95ch}
+.meta{
+  margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--rule);
+  font-family:var(--font-mono);font-size:.75rem;color:var(--muted);
+  display:flex;flex-wrap:wrap;gap:.3rem 1.6rem;
+}
+.meta b{color:var(--ink-soft);font-weight:500}
+.tools{position:absolute;top:1.6rem;right:1.5rem;display:flex;gap:.5rem}
+.tools button{
+  font:inherit;font-size:.78rem;padding:.35rem .8rem;cursor:pointer;
+  background:var(--surface);color:var(--ink-soft);
+  border:1px solid var(--rule);border-radius:5px;
+}
+.tools button:hover{background:var(--surface-2);color:var(--ink);border-color:var(--muted)}
+.tools button[aria-pressed="true"]{background:var(--a);color:#fff;border-color:var(--a)}
+
+/* ---------- Zones ---------- */
+main{padding:0 1.5rem 2rem}
+.zone{
+  position:relative;margin-bottom:1.6rem;padding:1rem 1.8rem 2rem;
+  border:1px dashed var(--zone);border-radius:10px;
+}
+.zone > h2{
+  font-size:.92rem;font-weight:700;letter-spacing:.1em;margin:.2rem 0 .1rem;
+  color:var(--zone);text-transform:uppercase;
+}
+.zone > .zone-sub{font-size:.82rem;color:var(--muted);margin:0 0 1.1rem}
+.grid{
+  display:grid;gap:3rem 5rem;align-items:start;
+  grid-template-columns:repeat(3,minmax(0,320px));
+  justify-content:space-between;
+  position:relative;z-index:1;
+}
+@media (max-width:1240px){ .grid{grid-template-columns:repeat(2,minmax(0,320px));justify-content:space-around} }
+@media (max-width:760px){ .grid{grid-template-columns:minmax(0,1fr);justify-content:stretch;gap:2.4rem} }
+.col{display:flex;flex-direction:column;gap:3rem}
+.spacer{min-height:1px}
+
+/* Connector layer */
+.wires{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:visible}
+.wires path{fill:none;stroke:var(--a);stroke-width:1.5;opacity:.85}
+.wires path.mute{stroke:var(--muted)}
+.wires text{
+  font-family:var(--font-mono);font-size:11px;font-weight:600;
+  fill:var(--ink-soft);paint-order:stroke;stroke:var(--surface);stroke-width:3px;
+}
+.wires text.note{font-weight:400;font-size:10.5px;fill:var(--muted)}
+
+/* ---------- Table card ---------- */
+.tbl{
+  position:relative;
+  background:var(--surface);border:1.5px solid var(--rule);border-radius:7px;
+}
+.tbl[open]{z-index:60}
+.tbl.anchor{border-color:var(--a);background:var(--a-fill)}
+.tbl.legacy{border-style:dashed;background:transparent}
+.tbl.lookup{border-style:dashed;background:transparent}
+.tbl.link{border-color:var(--rule-soft)}
+.tbl > summary{
+  list-style:none;cursor:pointer;padding:.4rem .6rem;
+  display:block;
+  border-bottom:1px solid var(--rule);
+  background:var(--surface-2);
+}
+.tbl.anchor > summary{background:transparent;border-bottom-color:var(--a)}
+.tbl.legacy > summary,.tbl.lookup > summary{background:transparent}
+.tbl > summary::-webkit-details-marker{display:none}
+.thead{display:flex;align-items:center;gap:.4rem}
+/* The disclosure triangle sits on .thead, not on summary::before — the short form
+   lives inside the <summary>, so a summary marker would sit above all of it. */
+.thead::before{
+  content:"▸";font-size:.8rem;color:var(--muted);
+  transition:transform .12s ease;flex:none;
+}
+.tbl[open] .thead::before{transform:rotate(90deg)}
+.tbl > summary:hover .thead::before{color:var(--ink)}
+.tname{font-family:var(--font-mono);font-size:.8rem;font-weight:600;color:var(--ink);flex:1;min-width:0;word-break:break-word;line-height:1.3}
+.tcount{font-family:var(--font-mono);font-size:.62rem;color:var(--muted);flex:none}
+.tnote{
+  margin:.35rem 0 0;padding-left:1.05rem;
+  font-size:.68rem;line-height:1.5;color:var(--muted);
+}
+
+/* Short form — inside the <summary>, therefore visible while collapsed. */
+.keys{
+  margin:.4rem 0 .05rem;padding-top:.35rem;padding-left:1.05rem;
+  border-top:1px solid var(--rule-soft);
+  display:flex;flex-direction:column;gap:.18rem;
+}
+
+/* Long form — overlays its surroundings. The card keeps its height so that the
+   grid, and with it the wires, stay rigid. */
+/* This rule is mandatory: an absolutely positioned child whose containing block
+   sits outside the collapsed <details> keeps rendering otherwise. */
+.tbl:not([open]) .cols{display:none}
+/* The overlay starts at the short form and covers it — otherwise the key rows
+   would be on screen twice. The script sets `top` per card. */
+.cols{
+  position:absolute;top:100%;left:-1.5px;right:-1.5px;
+  padding:.15rem 0 .3rem;
+  background:var(--surface);
+  border:1.5px solid var(--a);border-radius:7px;
+  box-shadow:0 12px 30px rgba(0,0,0,.22);
+  max-height:65vh;overflow:auto;
+  z-index:60;
+}
+.tbl[open] > summary{border-bottom-color:var(--a)}
+
+/* "Expand all" switches to flow mode — that is for reading, not navigating.
+   The grid moves anyway there, so the short form may go. */
+body.flow .cols{
+  position:static;border:none;border-top:1px solid var(--rule-soft);
+  border-radius:0;box-shadow:none;max-height:none;overflow:visible;
+}
+body.flow .tbl[open] .keys{display:none}
+body.flow .tbl[open] > summary{border-bottom-color:var(--rule)}
+.crow{
+  display:grid;grid-template-columns:1fr auto;gap:.35rem;align-items:baseline;
+  padding:.16rem .6rem;
+}
+.crow:nth-child(even){background:var(--surface-2)}
+.cname{font-family:var(--font-mono);font-size:.71rem;color:var(--ink-soft);word-break:break-word;line-height:1.4}
+.cname.key{color:var(--ink);font-weight:600}
+.ctype{font-family:var(--font-mono);font-size:.62rem;color:var(--muted);text-align:right;line-height:1.4}
+.pending{padding:.5rem .6rem;font-size:.68rem;line-height:1.5;color:var(--muted);font-style:italic}
+
+/* Key markers */
+.m{
+  font-family:var(--font-mono);font-size:.56rem;font-weight:700;letter-spacing:.04em;
+  padding:.06rem .28rem;border-radius:3px;white-space:nowrap;flex:none;
+  border:1px solid transparent;
+}
+.m-pk{color:var(--pk);background:var(--pk-bg);border-color:var(--pk)}
+.m-fk{color:var(--fk);background:var(--fk-bg);border-color:var(--fk)}
+.m-lk{color:var(--lk);background:var(--lk-bg);border-color:var(--lk)}
+.m-rf{color:var(--rf);background:var(--rf-bg);border-color:var(--rf)}
+.m-rv{color:var(--rv);background:var(--rv-bg);border-color:var(--rv)}
+.m-uq{color:var(--muted);background:var(--surface-3);border-color:var(--rule)}
+.krow{display:flex;align-items:baseline;gap:.35rem;font-family:var(--font-mono);font-size:.69rem;line-height:1.45;color:var(--ink-soft)}
+.krow .kn{flex:1;min-width:0;word-break:break-word}
+
+/* ---------- Panels ---------- */
+.panels{display:grid;gap:1.1rem;grid-template-columns:2fr 1fr;padding:0 1.5rem 1rem}
+@media (max-width:900px){ .panels{grid-template-columns:1fr} }
+.panel{
+  background:var(--surface);border:1px solid var(--rule);border-radius:7px;padding:.9rem 1.1rem;
+}
+.panel h3{margin:0 0 .5rem;font-size:.9rem;color:var(--ink)}
+.panel p{margin:0 0 .6rem;font-size:.82rem;color:var(--ink-soft)}
+.panel p:last-child{margin-bottom:0}
+.legend{display:flex;flex-direction:column;gap:.42rem;font-size:.78rem;color:var(--ink-soft)}
+.legend div{display:flex;align-items:baseline;gap:.5rem}
+code{font-family:var(--font-mono);font-size:.92em;background:var(--surface-2);padding:.05em .3em;border-radius:3px}
+.panel code{background:var(--surface-2)}
+footer{
+  padding:0 1.5rem 2.5rem;
+  font-family:var(--font-mono);font-size:.72rem;color:var(--muted);line-height:1.7;
+}
+footer b{color:var(--ink-soft);font-weight:600}
+footer p{margin:0 0 .6rem}
+
+/* ---------- Print ---------- */
+@media print{
+  .tools{display:none}
+  body{background:#fff}
+  .zone{break-inside:auto}
+  .tbl{break-inside:avoid}
+  .panel{break-inside:avoid}
+  /* There are no overlays on paper — open cards flow with the page. */
+  .cols{
+    position:static;border:none;border-top:1px solid var(--rule-soft);
+    border-radius:0;box-shadow:none;max-height:none;overflow:visible;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tools">
+    <button type="button" id="btn-expand" aria-pressed="false">Alle aufklappen</button>
+    <button type="button" id="btn-print" aria-pressed="false">Druckversion</button>
+  </div>
+  <h1>&lt;Model&gt; — Datenmodell</h1>
+  <p class="sub">&lt;One or two sentences: scope of the model, what a card shows.&gt;
+  Zugeklappt zeigt jede Karte ihre Schlüssel, aufgeklappt die vollständige Spaltenliste.</p>
+  <div class="meta">
+    <span><b>Stand</b> &lt;date&gt;</span>
+    <span><b>Grundlage</b> &lt;source document, sections&gt;</span>
+    <span><b>Verbindlich</b> ist &lt;the source&gt;, nicht diese Zeichnung</span>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= ZONE 1 ================= -->
+<section class="zone" id="zone1">
+  <h2>1 — &lt;Zone name&gt;</h2>
+  <p class="zone-sub">&lt;What belongs in this zone and why.&gt;</p>
+  <svg class="wires" id="wires1" aria-hidden="true"></svg>
+  <div class="grid">
+
+    <div class="col">
+      <!-- legacy: existing table, dashed, only the relevant columns -->
+      <details class="tbl legacy" id="t-customers">
+        <summary>
+          <div class="thead"><span class="tname">dbo.Customers</span><span class="tcount">Bestand</span></div>
+        <div class="tnote">Bestandstabelle — gezeigt sind nur die relevanten Spalten.</div>
+        <div class="keys"><div class="krow"><span class="kn">customerId</span><span class="m m-pk">PK</span></div></div>
+        </summary>
+        <div class="cols">
+          <div class="crow"><span class="cname key">customerId</span><span class="ctype"><span class="m m-pk">PK</span> int</span></div>
+          <div class="crow"><span class="cname">… übrige Spalten des Bestands</span><span class="ctype">—</span></div>
+        </div>
+      </details>
+
+      <!-- plain new table -->
+      <details class="tbl" id="t-order">
+        <summary>
+          <div class="thead"><span class="tname">Order</span><span class="tcount">6</span></div>
+        <div class="tnote">&lt;What this table is for, and the one thing about it that is not obvious.&gt;</div>
+        <div class="keys">
+          <div class="krow"><span class="kn">uniqueId</span><span class="m m-pk">PK</span></div>
+          <div class="krow"><span class="kn">customerId</span><span class="m m-fk">FK</span></div>
+          <div class="krow"><span class="kn">status</span><span class="m m-lk">lookup</span></div>
+        </div>
+        </summary>
+        <div class="cols">
+          <div class="crow"><span class="cname key">uniqueId</span><span class="ctype"><span class="m m-pk">PK</span> int IDENTITY</span></div>
+          <div class="crow"><span class="cname key">customerId</span><span class="ctype"><span class="m m-fk">FK</span> int NOT NULL</span></div>
+          <div class="crow"><span class="cname">orderNo</span><span class="ctype">varchar(20) NOT NULL</span></div>
+          <div class="crow"><span class="cname">orderedAt</span><span class="ctype">datetime2 NOT NULL</span></div>
+          <div class="crow"><span class="cname">status</span><span class="ctype"><span class="m m-lk">lookup</span> int NOT NULL</span></div>
+          <div class="crow"><span class="cname">version</span><span class="ctype"><span class="m m-rv">RV</span> rowversion</span></div>
+        </div>
+      </details>
+
+      <!-- lookup: value list, dashed -->
+      <details class="tbl lookup" id="t-orderstatus">
+        <summary>
+          <div class="thead"><span class="tname">lookup.OrderStatus</span><span class="tcount">3</span></div>
+        <div class="tnote">Werteliste. &lt;Which lists are shared, and on what grounds.&gt;</div>
+        <div class="keys">
+          <div class="krow"><span class="kn">id · name · description</span><span class="m m-pk">PK</span></div>
+          <div class="krow"><span class="kn">Ziel aller lookup-Marker</span><span class="m m-lk">lookup</span></div>
+        </div>
+        </summary>
+        <div class="cols">
+          <div class="crow"><span class="cname key">id</span><span class="ctype"><span class="m m-pk">PK</span> int</span></div>
+          <div class="crow"><span class="cname">name</span><span class="ctype">Anzeigetext</span></div>
+          <div class="crow"><span class="cname">— alle FK hierauf: NO_ACTION</span><span class="ctype">—</span></div>
+        </div>
+      </details>
+    </div>
+
+    <div class="col">
+      <details class="tbl" id="t-orderitem">
+        <summary>
+          <div class="thead"><span class="tname">OrderItem</span><span class="tcount">6</span></div>
+        <div class="tnote">&lt;Note.&gt; <code>position</code> ist Listenposition, nie Identität.</div>
+        <div class="keys">
+          <div class="krow"><span class="kn">uniqueId</span><span class="m m-pk">PK</span></div>
+          <div class="krow"><span class="kn">orderUniqueId · productId</span><span class="m m-fk">FK</span></div>
+        </div>
+        </summary>
+        <div class="cols">
+          <div class="crow"><span class="cname key">uniqueId</span><span class="ctype"><span class="m m-pk">PK</span> int IDENTITY</span></div>
+          <div class="crow"><span class="cname key">orderUniqueId</span><span class="ctype"><span class="m m-fk">FK</span> int NOT NULL</span></div>
+          <div class="crow"><span class="cname key">productId</span><span class="ctype"><span class="m m-fk">FK</span> int NOT NULL</span></div>
+          <div class="crow"><span class="cname">position</span><span class="ctype">int NOT NULL</span></div>
+          <div class="crow"><span class="cname">quantity</span><span class="ctype">decimal(9,3) NOT NULL</span></div>
+          <div class="crow"><span class="cname">version</span><span class="ctype"><span class="m m-rv">RV</span> rowversion</span></div>
+        </div>
+      </details>
+
+      <!-- link: pure junction table, two columns, no payload -->
+      <details class="tbl link" id="t-ordertag">
+        <summary>
+          <div class="thead"><span class="tname">OrderTag</span><span class="tcount">2</span></div>
+        <div class="tnote">Löst auf: Order n:m Tag. Reine Zuordnungstabelle: keine <code>version</code>, keine Nutzspalten.</div>
+        <div class="keys">
+          <div class="krow"><span class="kn">orderUniqueId</span><span class="m m-pk">PK</span><span class="m m-fk">FK</span></div>
+          <div class="krow"><span class="kn">productId</span><span class="m m-pk">PK</span><span class="m m-fk">FK</span></div>
+        </div>
+        </summary>
+        <div class="cols">
+          <div class="crow"><span class="cname key">orderUniqueId</span><span class="ctype"><span class="m m-pk">PK</span><span class="m m-fk">FK</span> int</span></div>
+          <div class="crow"><span class="cname key">productId</span><span class="ctype"><span class="m m-pk">PK</span><span class="m m-fk">FK</span> int</span></div>
+        </div>
+      </details>
+    </div>
+
+    <div class="col">
+      <!-- anchor: the table the zone revolves around -->
+      <details class="tbl anchor" id="t-product">
+        <summary>
+          <div class="thead"><span class="tname">Product</span><span class="tcount">5</span></div>
+        <div class="tnote">&lt;Why this table is the anchor of the zone.&gt;</div>
+        <div class="keys">
+          <div class="krow"><span class="kn">productId</span><span class="m m-pk">PK</span></div>
+          <div class="krow"><span class="kn">sku</span><span class="m m-uq">UQ</span></div>
+          <div class="krow"><span class="kn">successorProductId</span><span class="m m-rf">#1</span></div>
+        </div>
+        </summary>
+        <div class="cols">
+          <div class="crow"><span class="cname key">productId</span><span class="ctype"><span class="m m-pk">PK</span> int IDENTITY</span></div>
+          <div class="crow"><span class="cname key">sku</span><span class="ctype"><span class="m m-uq">UQ</span> varchar(30)</span></div>
+          <div class="crow"><span class="cname">name</span><span class="ctype">varchar(255) NOT NULL</span></div>
+          <div class="crow"><span class="cname">successorProductId</span><span class="ctype"><span class="m m-rf">#1</span> int NULL</span></div>
+          <div class="crow"><span class="cname">version</span><span class="ctype"><span class="m m-rv">RV</span> rowversion</span></div>
+        </div>
+      </details>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= ZONE 2 ================= -->
+<section class="zone" id="zone2">
+  <h2>2 — &lt;Zone name&gt;</h2>
+  <p class="zone-sub">&lt;What belongs in this zone and why.&gt;</p>
+  <svg class="wires" id="wires2" aria-hidden="true"></svg>
+  <div class="grid">
+
+    <div class="col">
+      <!-- A table may appear in a second zone as an anchor. Different id, same name. -->
+      <details class="tbl anchor" id="t-product2">
+        <summary>
+          <div class="thead"><span class="tname">Product</span><span class="tcount">Anker</span></div>
+        <div class="tnote">Dieselbe Tabelle wie in Zone 1 — hier nur als Ankerpunkt.</div>
+        <div class="keys"><div class="krow"><span class="kn">productId</span><span class="m m-pk">PK</span></div></div>
+        </summary>
+        <div class="cols">
+          <div class="crow"><span class="cname key">productId</span><span class="ctype"><span class="m m-pk">PK</span> int IDENTITY</span></div>
+        </div>
+      </details>
+    </div>
+
+    <div class="col">
+      <details class="tbl" id="t-productprice">
+        <summary>
+          <div class="thead"><span class="tname">ProductPrice</span><span class="tcount">4</span></div>
+        <div class="tnote">&lt;Note.&gt;</div>
+        <div class="keys">
+          <div class="krow"><span class="kn">productId · validFrom</span><span class="m m-pk">PK</span></div>
+        </div>
+        </summary>
+        <div class="cols">
+          <div class="crow"><span class="cname key">productId</span><span class="ctype"><span class="m m-pk">PK</span><span class="m m-fk">FK</span> int</span></div>
+          <div class="crow"><span class="cname key">validFrom</span><span class="ctype"><span class="m m-pk">PK</span> date</span></div>
+          <div class="crow"><span class="cname">amount</span><span class="ctype">decimal(11,2) NOT NULL</span></div>
+          <div class="crow"><span class="cname">version</span><span class="ctype"><span class="m m-rv">RV</span> rowversion</span></div>
+        </div>
+      </details>
+
+      <details class="tbl" id="t-productimage">
+        <summary>
+          <div class="thead"><span class="tname">ProductImage</span><span class="tcount">4</span></div>
+        <div class="tnote">&lt;Note.&gt;</div>
+        <div class="keys">
+          <div class="krow"><span class="kn">uniqueId</span><span class="m m-pk">PK</span></div>
+          <div class="krow"><span class="kn">productId</span><span class="m m-fk">FK</span></div>
+        </div>
+        </summary>
+        <div class="cols">
+          <div class="crow"><span class="cname key">uniqueId</span><span class="ctype"><span class="m m-pk">PK</span> int IDENTITY</span></div>
+          <div class="crow"><span class="cname key">productId</span><span class="ctype"><span class="m m-fk">FK</span> int NOT NULL</span></div>
+          <div class="crow"><span class="cname">position</span><span class="ctype">int NOT NULL</span></div>
+          <div class="crow"><span class="cname">version</span><span class="ctype"><span class="m m-rv">RV</span> rowversion</span></div>
+        </div>
+      </details>
+    </div>
+
+  </div>
+</section>
+</main>
+
+<div class="panels">
+  <div class="panel">
+    <h3>&lt;What looks wrong in the schema but is deliberate&gt;</h3>
+    <p>&lt;State the rule from the source that forces it, why the obvious construct cannot deliver it, and what carries the guarantee instead. Without this panel the next reader "repairs" the intent away.&gt;</p>
+  </div>
+  <!-- The legend describes THIS model. Re-derive every line — the shipped
+       wording is an example, not a default that is safe to keep. -->
+  <div class="panel">
+    <h3>Legende</h3>
+    <div class="legend">
+      <div><span class="m m-pk">PK</span><span>Primärschlüssel</span></div>
+      <div><span class="m m-fk">FK</span><span>Fremdschlüssel — Löschverhalten an der Kante, wo bekannt</span></div>
+      <div><span class="m m-uq">UQ</span><span>eindeutig — global oder je Elternteil, siehe Karte</span></div>
+      <div><span class="m m-lk">lookup</span><span>Wertelisten-FK, <code>NO_ACTION</code></span></div>
+      <div><span class="m m-rf">#n</span><span>Verweis — <b>kein</b> FK</span></div>
+      <div><span class="m m-rv">RV</span><span><code>rowversion</code>, Änderungserkennung</span></div>
+      <div><span>1 ↔ 0..n</span><span>Multiplizität an beiden Kantenenden</span></div>
+      <div><span>→</span><span>Pfeilspitze zeigt auf die <b>Kindseite</b> — dort steht der Fremdschlüssel</span></div>
+      <div><span>gestrichelt</span><span>Bestand bzw. Werteliste</span></div>
+      <div><span>blau</span><span>trägt die Struktur</span></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p><b>Entschieden in dieser Fassung:</b> &lt;the decisions this drawing commits to&gt;</p>
+  <p><b>Noch nicht drin:</b> &lt;what is knowingly missing&gt;</p>
+  <p><b>Offen:</b> &lt;what is still undecided&gt;</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Wires ----------
+     from/to are element ids. Offsets are named fo/qo — NEVER reuse `to` for an
+     offset: the key collides with the target id, the id loses, getElementById
+     returns null and the edge silently disappears.
+     fs/ts: side of the source / target card — "top" | "bottom" | "left" | "right".
+     fo/qo: shift the attachment point along that side, in px.
+     bend : shift the corner of the route, in px. Stagger fo AND bend for bundles.
+     a/b  : multiplicity at the source / target end. b is the child side.
+     note : extra label, placed on the opposite side of the multiplicities.
+     mute : grey line, for edges to existing tables and value lists. */
+  var WIRES = {
+    wires1: [
+      {from:"t-customers",   fs:"bottom", to:"t-order",     ts:"top",   a:"1", b:"0..n", note:"CASCADE", mute:true},
+      {from:"t-orderstatus", fs:"top",    to:"t-order",     ts:"bottom",a:"1", b:"0..n", note:"NO_ACTION", mute:true},
+      {from:"t-order",       fs:"right",  to:"t-orderitem", ts:"left",  a:"1", b:"0..n"},
+      {from:"t-order",       fs:"right",  to:"t-ordertag",  ts:"left",  a:"1", b:"0..n", fo:18, bend:-20},
+      {from:"t-product",     fs:"left",   to:"t-orderitem", ts:"right", a:"1", b:"0..n"},
+      {from:"t-product",     fs:"left",   to:"t-ordertag",  ts:"right", a:"1", b:"0..n", qo:18, bend:20}
+    ],
+    wires2: [
+      {from:"t-product2", fs:"right", to:"t-productprice", ts:"left", a:"1", b:"0..n", fo:4,  bend:-24},
+      {from:"t-product2", fs:"right", to:"t-productimage", ts:"left", a:"1", b:"0..n", fo:18, bend:0}
+    ]
+  };
+
+  var SVGNS = "http://www.w3.org/2000/svg";
+
+  function anchor(rect, host, side, off){
+    var x = rect.left - host.left, y = rect.top - host.top;
+    off = off || 0;
+    switch(side){
+      case "top":    return {x:x + rect.width/2 + off, y:y,               dx:0,  dy:-1};
+      case "bottom": return {x:x + rect.width/2 + off, y:y + rect.height, dx:0,  dy:1};
+      case "left":   return {x:x,                     y:y + 22 + off,    dx:-1, dy:0};
+      default:       return {x:x + rect.width,        y:y + 22 + off,    dx:1,  dy:0};
+    }
+  }
+
+  function path(p, q, bend){
+    // Orthogonal route with at most two corners.
+    // `bend` moves the corner so that bundled edges do not lie on top of each other.
+    var GAP = 22;
+    bend = bend || 0;
+    var sx = p.x + p.dx*GAP, sy = p.y + p.dy*GAP;
+    var ex = q.x + q.dx*GAP, ey = q.y + q.dy*GAP;
+    var d = "M" + p.x + " " + p.y + "L" + sx + " " + sy;
+    if(p.dx !== 0 || q.dx !== 0){
+      var mx = (sx + ex)/2 + bend;
+      d += "L" + mx + " " + sy + "L" + mx + " " + ey;
+    } else {
+      var my = (sy + ey)/2 + bend;
+      d += "L" + sx + " " + my + "L" + ex + " " + my;
+    }
+    return d + "L" + ex + " " + ey + "L" + q.x + " " + q.y;
+  }
+
+  // Arrowheads: one marker pair per drawing surface, so the ids stay unique.
+  // One marker per line colour — context-stroke does not carry everywhere.
+  function defs(svg, id){
+    var d = document.createElementNS(SVGNS, "defs");
+    [["a", "var(--a)"], ["m", "var(--muted)"]].forEach(function(v){
+      var mk = document.createElementNS(SVGNS, "marker");
+      mk.setAttribute("id", "arr-" + v[0] + "-" + id);
+      mk.setAttribute("viewBox", "0 0 10 10");
+      mk.setAttribute("refX", "9"); mk.setAttribute("refY", "5");
+      mk.setAttribute("markerWidth", "6"); mk.setAttribute("markerHeight", "6");
+      mk.setAttribute("orient", "auto-start-reverse");
+      var pt = document.createElementNS(SVGNS, "path");
+      pt.setAttribute("d", "M 0 0 L 10 5 L 0 10 z");
+      pt.setAttribute("fill", v[1]);
+      mk.appendChild(pt); d.appendChild(mk);
+    });
+    svg.appendChild(d);
+  }
+
+  function label(svg, x, y, txt, cls){
+    if(!txt) return;
+    var t = document.createElementNS(SVGNS, "text");
+    t.setAttribute("x", x); t.setAttribute("y", y);
+    t.setAttribute("text-anchor", "middle");
+    if(cls) t.setAttribute("class", cls);
+    t.textContent = txt;
+    svg.appendChild(t);
+  }
+
+  function draw(){
+    Object.keys(WIRES).forEach(function(svgId){
+      var svg = document.getElementById(svgId);
+      if(!svg) return;
+      var zone = svg.parentNode;
+      var host = zone.getBoundingClientRect();
+      svg.setAttribute("width", host.width);
+      svg.setAttribute("height", host.height);
+      svg.setAttribute("viewBox", "0 0 " + host.width + " " + host.height);
+      while(svg.firstChild) svg.removeChild(svg.firstChild);
+      defs(svg, svgId);
+
+      WIRES[svgId].forEach(function(w){
+        var ea = document.getElementById(w.from), eb = document.getElementById(w.to);
+        if(!ea || !eb) return;
+        var p = anchor(ea.getBoundingClientRect(), host, w.fs, w.fo);
+        var q = anchor(eb.getBoundingClientRect(), host, w.ts, w.qo);
+        var el = document.createElementNS(SVGNS, "path");
+        el.setAttribute("d", path(p, q, w.bend));
+        if(w.mute) el.setAttribute("class", "mute");
+        // The head sits at the target — it points at the child side, where the
+        // foreign key is.
+        el.setAttribute("marker-end", "url(#arr-" + (w.mute ? "m" : "a") + "-" + svgId + ")");
+        svg.appendChild(el);
+        // Offset sideways on vertical edges, otherwise the text sits on the line.
+        label(svg, p.x + p.dx*22 + (p.dy ? 20 : 0), p.y + p.dy*20 + (p.dy ? 4 : -6), w.a);
+        label(svg, q.x + q.dx*24 + (q.dy ? 20 : 0), q.y + q.dy*22 + (q.dy ? 4 : -6), w.b);
+        // Put the note on the opposite side of the multiplicities, or they overlap.
+        if(w.note) label(svg, (p.x+q.x)/2 - (p.dy ? 26 : 0), (p.y+q.y)/2 - 6, w.note, "note");
+      });
+    });
+  }
+
+  /* ---------- Controls ----------
+     The wires are computed from the COLLAPSED grid and stay rigid.
+     An open card overlays the grid instead of moving it — which is why
+     toggling a card does NOT redraw. */
+  var all = Array.prototype.slice.call(document.querySelectorAll("details.tbl"));
+  var btnX = document.getElementById("btn-expand");
+
+  // Only ever one card open: the diagram is read collapsed, a card is opened
+  // briefly to look something up.
+  // The overlay covers the short form instead of repeating it. Where the short
+  // form starts depends on the length of the note — so measure per card.
+  function placeOverlay(d){
+    var cols = d.querySelector(".cols"), keys = d.querySelector(".keys");
+    if(!cols) return;
+    if(!d.open || document.body.classList.contains("flow") || !keys){
+      cols.style.top = "";
+      return;
+    }
+    cols.style.top = keys.offsetTop + "px";
+  }
+
+  all.forEach(function(d){
+    d.addEventListener("toggle", function(){
+      if(!d.open || document.body.classList.contains("flow")){ placeOverlay(d); return; }
+      all.forEach(function(o){ if(o !== d) o.open = false; });
+      placeOverlay(d);
+    });
+  });
+
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && !document.body.classList.contains("flow")){
+      all.forEach(function(d){ d.open = false; });
+    }
+  });
+
+  document.addEventListener("click", function(e){
+    if(document.body.classList.contains("flow")) return;
+    if(e.target.closest(".tbl") || e.target.closest(".tools")) return;
+    all.forEach(function(d){ d.open = false; });
+  });
+
+  btnX.addEventListener("click", function(){
+    var open = btnX.getAttribute("aria-pressed") !== "true";
+    document.body.classList.toggle("flow", open);
+    all.forEach(function(d){ d.open = open; placeOverlay(d); });
+    btnX.setAttribute("aria-pressed", String(open));
+    btnX.textContent = open ? "Alle zuklappen" : "Alle aufklappen";
+    draw();   // only needed here: flow mode really does move the grid
+  });
+
+  var btnP = document.getElementById("btn-print");
+  btnP.addEventListener("click", function(){
+    var on = btnP.getAttribute("aria-pressed") !== "true";
+    document.documentElement.setAttribute("data-theme", on ? "light" : "dark");
+    if(!on) document.documentElement.removeAttribute("data-theme");
+    btnP.setAttribute("aria-pressed", String(on));
+    btnP.textContent = on ? "Bildschirmversion" : "Druckversion";
+    draw();
+  });
+
+  window.addEventListener("resize", draw);
+  window.addEventListener("load", draw);
+  if(document.readyState !== "loading") draw();
+})();
+</script>
+
+</body>
+</html>

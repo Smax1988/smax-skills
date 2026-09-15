@@ -1,0 +1,30 @@
+## Razor / Blazor (.razor, .cshtml) — VS Dark+ (Smax)
+syntax razor "\.(razor|cshtml)$"
+
+## HTML tag delimiters & names
+color #888 "</?|/?>"
+color #59c "</?[A-Za-z][A-Za-z0-9-]*"
+## HTML attributes (incl. @bind, @onclick, :key)
+color #9df "[A-Za-z_@:-][A-Za-z0-9_@:.-]*="
+
+## Razor implicit expressions  @variable  @Model.Foo
+color #9df "@[A-Za-z_(][A-Za-z0-9_.]*"
+
+## Razor directives & control transitions
+color #c8c "@(page|using|code|functions|inject|model|inherits|namespace|implements|attribute|layout|addTagHelper|removeTagHelper|tagHelperPrefix|typeparam|preservewhitespace|rendermode|section|await|foreach|for|while|if|else|switch|do|try|catch|finally|lock)\>"
+
+## C# keywords inside code blocks
+color #59c "\<(var|new|public|private|protected|internal|static|void|class|record|async|await|get|set|string|int|bool|double|decimal|long|this|typeof|nameof)\>"
+color #c8c "\<(return|if|else|for|foreach|while|switch|try|catch|finally|throw)\>"
+color #59c "\<(true|false|null)\>"
+
+## Numbers
+color #bca "\<([0-9]+|0x[[:xdigit:]]+)\>"
+
+## Strings
+color #c97 ""([^"\]|\\.)*"|'([^'\]|\\.)*'"
+
+## Comments  @* *@   <!-- -->   //
+color #6a5 start="@\*" end="\*@"
+color #6a5 start="<!--" end="-->"
+color #6a5 "(^|[[:blank:]])//.*"

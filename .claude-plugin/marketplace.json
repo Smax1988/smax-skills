@@ -1,0 +1,12 @@
+{
+  "name": "smax-skills",
+  "owner": { "name": "Smax" },
+  "plugins": [
+    {
+      "name": "smax",
+      "source": "./plugin",
+      "displayName": "Smax Skills",
+      "description": "Smax's personal skill set — dev workflow and personal tools"
+    }
+  ]
+}

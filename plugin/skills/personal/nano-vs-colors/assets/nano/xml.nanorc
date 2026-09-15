@@ -1,0 +1,22 @@
+## XML / .NET project & config files — VS Dark+ (Smax)
+syntax xml "\.(xml|xsd|xsl|xslt|svg|rss|atom|wsdl|csproj|vbproj|fsproj|proj|props|targets|nuspec|resx|config|manifest|plist|storyboard|xib)$"
+
+## Processing instructions / declaration / DOCTYPE
+color #888 "<\?[^?]*\?>"
+color #888 "<!DOCTYPE[^>]*>"
+## CDATA sections
+color #6a5 start="<!\[CDATA\[" end="\]\]>"
+
+## Tag delimiters
+color #888 "</?|/?>"
+## Tag names
+color #59c "</?[A-Za-z_][A-Za-z0-9_:.-]*"
+## Attribute names
+color #9df "[A-Za-z_][A-Za-z0-9_:.-]*="
+## Attribute values / strings
+color #c97 ""[^"]*"|'[^']*'"
+## Entities  &amp;  &#123;
+color #dda "&[A-Za-z#][A-Za-z0-9]*;"
+
+## Comments
+color #6a5 start="<!--" end="-->"

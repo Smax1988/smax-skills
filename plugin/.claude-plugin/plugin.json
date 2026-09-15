@@ -1,0 +1,8 @@
+{
+  "name": "smax",
+  "displayName": "Smax Skills",
+  "description": "Smax's personal skill set — dev workflow and personal tools",
+  "author": { "name": "Smax" },
+  "skills": ["./skills/dev", "./skills/personal"],
+  "keywords": ["development", "productivity", "personal"]
+}

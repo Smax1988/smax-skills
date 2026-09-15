@@ -1,0 +1,31 @@
+## TypeScript (.ts, .tsx, .mts, .cts) — VS Dark+ (Smax)
+syntax typescript "\.(m|c)?tsx?$"
+comment "//"
+
+## Type / class names (PascalCase)
+color #4cb "\<[A-Z][A-Za-z0-9_]*\>"
+## Function / method calls:  name(
+color #dda "[A-Za-z_$][A-Za-z0-9_$]*[[:space:]]*(\()"
+
+## Declarations / modifiers
+color #59c "\<(abstract|as|async|class|const|declare|enum|export|extends|function|implements|import|infer|instanceof|interface|is|keyof|let|namespace|new|private|protected|public|readonly|require|satisfies|static|super|this|type|var|from|get|set|module|override|out|accessor)\>"
+## Built-in types
+color #59c "\<(any|bigint|boolean|never|number|object|string|symbol|undefined|unknown|void)\>"
+
+## Control flow
+color #c8c "\<(if|else|switch|case|default|for|do|while|with|in|of|try|catch|finally|return|break|continue|throw|yield|await|typeof|delete)\>"
+
+## Constants
+color #59c "\<(true|false|null|undefined|NaN|Infinity)\>"
+## Numbers
+color #bca "\<([0-9][0-9_]*\.?[0-9_]*([eE][-+]?[0-9]+)?n?|0[xX][[:xdigit:]_]+)\>"
+
+## Decorators  @Component
+color #dda "@[A-Za-z_][A-Za-z0-9_.]*"
+
+## Strings & template literals
+color #c97 ""([^"\]|\\.)*"|'([^'\]|\\.)*'|`([^`\]|\\.)*`"
+
+## Comments
+color #6a5 "(^|[[:blank:]])//.*"
+color #6a5 start="/\*" end="\*/"
