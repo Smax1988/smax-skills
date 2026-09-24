@@ -179,6 +179,39 @@ entstanden. Beides soll in jedem Repo automatisch funktionieren.
       Maschine: `~/.claude/statusline-command.sh`, eingehängt über
       `statusLine` in `~/.claude/settings.json`.
 
+### 2.4 · `install` (Arbeitstitel) — alles einrichten, was das Plugin braucht
+
+**Plugin-Skill**, `user-only` (`disable-model-invocation: true`).
+
+Das Plugin setzt heute stillschweigend eine eingerichtete Maschine voraus:
+Einträge in der globalen `~/.claude/CLAUDE.md`, externe Werkzeuge (Node/`npx`
+für `md-to-pdf`, `sync-solution-items`, `infographic-page`; Playwright für
+`data-model-diagram`, `whats-for-lunch`; PowerShell 7), dazu Abhängigkeiten wie
+der PowerShell SecretStore. Auf einer frischen Maschine fällt das erst auf,
+wenn ein Skill mitten im Lauf scheitert. Ein Skill soll das in einem Durchgang
+prüfen und nachziehen. Fertig, wenn ein Lauf auf einer frischen Maschine jeden
+Skill lauffähig hinterlässt und ein zweiter Lauf nichts mehr ändert.
+
+- [ ] **2.4.1** Bestand erheben: je Skill die externen Abhängigkeiten und die
+      `CLAUDE.md`-/`settings.json`-Einträge, auf die er sich verlässt. Der
+      SecretStore taucht in keinem `smax`-Skill auf — klären, wer ihn braucht.
+      Gehört er zu einem `cnx`-Skill, gehört auch seine Einrichtung nach `cnx`
+      (`docs/decisions/0025`), nicht hierher.
+- [ ] **2.4.2 · Entscheidung: Wo steht die Liste der Anforderungen?** Zentral
+      im Install-Skill, oder je Skill deklariert (Frontmatter oder eigene
+      Datei) und vom Install-Skill eingesammelt. Zentral ist einfacher, läuft
+      aber still auseinander wie `README.md`/`NOTICE.md` — dann gehört die
+      Prüfung in `sync-plugin-docs`.
+- [ ] **2.4.3 · Idempotent und nie still.** Vorhandenes erkennen, nur Fehlendes
+      nachziehen; jede Änderung an der globalen `CLAUDE.md` vorher zeigen und
+      bestätigen lassen (Muster wie `domain-modeling`: Block vorhanden, anders
+      formuliert, veraltet). Installationen von Software ebenfalls bestätigen.
+- [ ] **2.4.4 · Entscheidung: Verhältnis zu 2.3 `statusline-setup`.** Eigener
+      Skill bleiben oder als optionaler Schritt im Install-Skill aufgehen.
+- [ ] **2.4.5** Nur Windows oder auch andere Plattformen? Die bekannten
+      Abhängigkeiten sind Windows-lastig (PowerShell, `.bat`).
+- [ ] **2.4.6** Als Decision festhalten, sobald die Form steht.
+
 ---
 
 ## 3 · Model und Effort je Skill
