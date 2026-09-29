@@ -45,7 +45,7 @@ _Avoid_: Projekt-Skill, privater Skill
 
 **Abgeleitetes Dokument** (`DerivedDocument`):
 Ein Dokument, dessen Inhalt aus dem Skill-Bestand herleitbar ist — heute
-`README.md` und `plugin/NOTICE.md`. Das Gegenstück ist handgeschriebener Inhalt
+`README.md`, `plugin/NOTICE.md` und die Anforderungsliste. Das Gegenstück ist handgeschriebener Inhalt
 (`TODOS.md`, `CLAUDE.md`, `docs/decisions/`), der aus dem Gespräch stammt und
 aus keiner Datei berechnet werden kann. Die Grenze verläuft innerhalb eines
 Dokuments, nicht zwischen Dokumenten: Eine Tabellenzeile ist abgeleitet, der
@@ -105,6 +105,32 @@ Der `grep` über die abgeleiteten Dokumente, der zusätzlich zu jeder Quelle
 läuft. Er findet Fundstellen, die keine Quelle nennt — und kann prinzipiell
 weder Fehlendes noch Falsches finden.
 _Avoid_: Fallback, Absicherung, Fangnetz
+
+**Anforderung** (`Requirement`):
+Etwas, das auf der Maschine vorhanden sein muss, damit ein Plugin-Skill läuft,
+und das das Plugin nicht selbst mitliefert — ein Programm im `PATH` oder ein
+MCP-Server. Keine Anforderung sind Fähigkeiten des Harness (Subagenten,
+WebSearch), Dateien im Repo und Verzeichnisse, die ein Skill selbst anlegt.
+_Avoid_: Abhängigkeit, Dependency, Voraussetzung, Prerequisite
+
+**Optionale Anforderung** (`OptionalRequirement`):
+Eine Anforderung, deren Fehlen einen Skill nur einschränkt, nicht scheitern
+lässt — ein optionaler Schritt fällt weg, der Rest läuft. Ihr Gegenstück ist die
+**Pflicht-Anforderung** (`MandatoryRequirement`).
+_Avoid_: weiche Abhängigkeit, Soft-Dependency, Empfehlung
+
+**Anforderungsliste** (`RequirementList`):
+Die Aufstellung aller Anforderungen des Plugins im Setup-Skill — je Anforderung,
+wie sie geprüft und installiert wird und welche Skills sie brauchen. Die
+Zuordnung zu den Skills ist abgeleitet, Prüfung und Installation sind es nicht.
+_Avoid_: Abhängigkeitsliste, Manifest, Voraussetzungsliste
+
+**Signatur** (`Signature`):
+Die Zeichenfolge, an der eine Anforderung im Verzeichnis eines Skills zu
+erkennen ist — ein Programmaufruf (`npx`, `python -m`), ein Tool-Präfix
+(`mcp__playwright__`). Ein Treffer ist ein Hinweis, kein Beweis: Beispielcode
+trägt dieselben Zeichenfolgen.
+_Avoid_: Muster, Pattern, Marker (das sind die `REQUIRED`-Marker eines Aufrufs)
 
 **Falle** (`Trap`):
 Eine benannte Stelle im Skill, an der die naheliegende Lesart falsch ist. Keine

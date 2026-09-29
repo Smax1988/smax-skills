@@ -170,36 +170,16 @@ entstanden. Beides soll in jedem Repo automatisch funktionieren.
       die Antwort bestimmt den ganzen Zuschnitt.
 - [ ] **2.2.6** Als Decision festhalten, sobald die Form steht.
 
-### 2.4 · `install` (Arbeitstitel) — alles einrichten, was das Plugin braucht
+### 2.4 · `setup` — alles einrichten, was das Plugin braucht
 
-**Plugin-Skill**, `user-only` (`disable-model-invocation: true`).
+**Spec:** `docs/01_Specs/Setup/SPEC-Setup-29092026.md`. Entscheidungen sind
+`0027` (Anforderungsliste zentral, `sync-plugin-docs` bewacht sie) und `0028`
+(nur Windows, winget). Die Bestandsaufnahme steht in der Spec (§2).
 
-Das Plugin setzt heute stillschweigend eine eingerichtete Maschine voraus:
-Einträge in der globalen `~/.claude/CLAUDE.md`, externe Werkzeuge (Node/`npx`
-für `md-to-pdf`, `sync-solution-items`, `infographic-page`; Playwright für
-`data-model-diagram`, `whats-for-lunch`; PowerShell 7), dazu Abhängigkeiten wie
-der PowerShell SecretStore. Auf einer frischen Maschine fällt das erst auf,
-wenn ein Skill mitten im Lauf scheitert. Ein Skill soll das in einem Durchgang
-prüfen und nachziehen. Fertig, wenn ein Lauf auf einer frischen Maschine jeden
-Skill lauffähig hinterlässt und ein zweiter Lauf nichts mehr ändert.
-
-- [ ] **2.4.1** Bestand erheben: je Skill die externen Abhängigkeiten und die
-      `CLAUDE.md`-/`settings.json`-Einträge, auf die er sich verlässt. Der
-      SecretStore taucht in keinem `smax`-Skill auf — klären, wer ihn braucht.
-      Gehört er zu einem `cnx`-Skill, gehört auch seine Einrichtung nach `cnx`
-      (`docs/decisions/0025`), nicht hierher.
-- [ ] **2.4.2 · Entscheidung: Wo steht die Liste der Anforderungen?** Zentral
-      im Install-Skill, oder je Skill deklariert (Frontmatter oder eigene
-      Datei) und vom Install-Skill eingesammelt. Zentral ist einfacher, läuft
-      aber still auseinander wie `README.md`/`NOTICE.md` — dann gehört die
-      Prüfung in `sync-plugin-docs`.
-- [ ] **2.4.3 · Idempotent und nie still.** Vorhandenes erkennen, nur Fehlendes
-      nachziehen; jede Änderung an der globalen `CLAUDE.md` vorher zeigen und
-      bestätigen lassen (Muster wie `domain-modeling`: Block vorhanden, anders
-      formuliert, veraltet). Installationen von Software ebenfalls bestätigen.
-- [ ] **2.4.5** Nur Windows oder auch andere Plattformen? Die bekannten
-      Abhängigkeiten sind Windows-lastig (PowerShell, `.bat`).
-- [ ] **2.4.6** Als Decision festhalten, sobald die Form steht.
+Offen ist nur noch die Umsetzung: Plan schreiben, Skill bauen,
+`sync-plugin-docs` erweitern. Fertig, wenn die Abnahmefälle der Spec (§8)
+durchlaufen: Ein Lauf auf einer frischen Maschine hinterlässt jeden Skill
+lauffähig, und ein zweiter Lauf meldet „Alles vorhanden."
 
 ---
 
@@ -552,3 +532,15 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       trifft es jeden Nutzer — dann lohnt ein zweiter Hook-Matcher, der `Read`
       unterhalb `${CLAUDE_PLUGIN_ROOT}` genehmigt. Fragt sie nicht, genügt eine
       `Read()`-Regel in der eigenen `settings.json`.
+- [ ] **5.11** `sync-solution-items.ps1` lässt sich unter Windows PowerShell 5.1
+      nicht parsen. Die Datei ist UTF-8 ohne BOM und enthält Gedankenstriche in
+      doppelt gequoteten Strings (Z. 61, 64, 220, 225); 5.1 liest sie als cp1252,
+      und das Byte 0x94 beendet den String. Fertig, wenn das Skript ein
+      `#Requires -Version 7` trägt (klare Meldung statt Parserfehler) oder die
+      Striche durch ASCII ersetzt sind und es auch unter 5.1 parst.
+- [ ] **5.12** `writing-plans/SKILL.md:321`: `git add docs/ CONTEXT.md
+      CONTEXT-MAP.md *.slnx 2>/dev/null` bricht komplett ab, sobald ein Pathspec
+      nicht existiert (kein `CONTEXT-MAP.md`, kein `.slnx`), und `2>/dev/null`
+      verschluckt den Fehler. Nicht ausprobiert, Standardverhalten von git.
+      Fertig, wenn nur vorhandene Pfade übergeben werden und ein Test in einem
+      Repo ohne `CONTEXT-MAP.md` den Commit vollständig zeigt.
