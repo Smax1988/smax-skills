@@ -26,7 +26,7 @@ the fact next to its cause. It was rejected for three reasons:
 change under `plugin/skills/`, so the check needs no trigger of its own.
 
 **A signature hit is evidence, not proof.** `npm test` in a TDD example and
-`flow-node` in an HTML template contain the same strings as a real dependency.
+`flow-node` in an HTML template contain the same strings as a real requirement.
 Following [[0019-write-sourced-present-the-rest]], an added or removed hit is
 therefore presented, not written. The only cases written silently are a skill
 that is deleted or renamed. Whether a requirement is mandatory or optional for a
@@ -50,7 +50,7 @@ buys that for a case the branch base already covers completely. The branch base
 is unchanged.
 
 **The setup skill is excluded from the signature scan.** Its requirement list
-contains every signature by construction. Its own prerequisites are Git Bash,
+contains every signature by construction. Its own requirements are Git Bash,
 `powershell.exe`, `winget` and `claude`. They come with Windows or with Claude
 Code, or the skill checks them itself, so they are not rows.
 

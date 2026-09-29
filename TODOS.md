@@ -533,7 +533,3 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       verschluckt den Fehler. Nicht ausprobiert, Standardverhalten von git.
       Fertig, wenn nur vorhandene Pfade übergeben werden und ein Test in einem
       Repo ohne `CONTEXT-MAP.md` den Commit vollständig zeigt.
-- [ ] **5.13** `docs/decisions/0027-requirement-list-central-guarded-by-sync.md`
-      nutzt Begriffe aus `_Avoid_` („a real dependency", „Its own
-      prerequisites"); im Projekt heißt es *requirement*. Fertig, wenn der Text
-      stattdessen *requirement* sagt.
