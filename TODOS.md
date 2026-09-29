@@ -48,6 +48,14 @@ vollständig erheben; der erste Schritt gehört auf die andere Maschine.
 - [ ] **1.1.3** Repos nachziehen
 - [ ] **1.1.4** Ergebnis als Decision festhalten, damit die Struktur danach
       verbindlich ist und nicht wieder auseinanderläuft
+- [ ] **1.1.5** Archiv-Ort festlegen und die Skills angleichen: README,
+      `writing-specs`, `writing-plans`, `brainstorming`, `executing-plans` und
+      `subagent-driven-development` sprechen von `Archive/`, nur
+      `sync-solution-items` nennt den Ordnernamen `00_Archive/` — Ort (je
+      `01_Specs/`/`02_Plans/` oder einmal unter `docs/`) steht nirgends. Dieses
+      Repo archiviert seit 29.09.2026 nach `docs/01_Specs/00_Archive/<Slug>/`
+      bzw. `docs/02_Plans/00_Archive/<Slug>/`. Fertig, wenn Name und Ort überall
+      gleich und die Lese-Sperre der Skills eindeutig auf ihn passt
 
 ---
 
