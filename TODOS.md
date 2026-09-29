@@ -170,15 +170,6 @@ entstanden. Beides soll in jedem Repo automatisch funktionieren.
       die Antwort bestimmt den ganzen Zuschnitt.
 - [ ] **2.2.6** Als Decision festhalten, sobald die Form steht.
 
-### 2.3 · `statusline-setup` — Statusline einrichten
-
-**Plugin-Skill**, `user-only` (`disable-model-invocation: true`).
-
-- [ ] **2.3.1** Statusline-Setup vom Arbeits-Laptop übernehmen und als Skill
-      fassen. Vorlage ist die dortige Konfiguration; Referenz auf dieser
-      Maschine: `~/.claude/statusline-command.sh`, eingehängt über
-      `statusLine` in `~/.claude/settings.json`.
-
 ### 2.4 · `install` (Arbeitstitel) — alles einrichten, was das Plugin braucht
 
 **Plugin-Skill**, `user-only` (`disable-model-invocation: true`).
@@ -206,8 +197,6 @@ Skill lauffähig hinterlässt und ein zweiter Lauf nichts mehr ändert.
       nachziehen; jede Änderung an der globalen `CLAUDE.md` vorher zeigen und
       bestätigen lassen (Muster wie `domain-modeling`: Block vorhanden, anders
       formuliert, veraltet). Installationen von Software ebenfalls bestätigen.
-- [ ] **2.4.4 · Entscheidung: Verhältnis zu 2.3 `statusline-setup`.** Eigener
-      Skill bleiben oder als optionaler Schritt im Install-Skill aufgehen.
 - [ ] **2.4.5** Nur Windows oder auch andere Plattformen? Die bekannten
       Abhängigkeiten sind Windows-lastig (PowerShell, `.bat`).
 - [ ] **2.4.6** Als Decision festhalten, sobald die Form steht.
