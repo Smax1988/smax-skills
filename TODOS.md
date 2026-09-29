@@ -170,17 +170,6 @@ entstanden. Beides soll in jedem Repo automatisch funktionieren.
       die Antwort bestimmt den ganzen Zuschnitt.
 - [ ] **2.2.6** Als Decision festhalten, sobald die Form steht.
 
-### 2.4 · `setup` — alles einrichten, was das Plugin braucht
-
-**Spec:** `docs/01_Specs/Setup/SPEC-Setup-29092026.md`. Entscheidungen sind
-`0027` (Anforderungsliste zentral, `sync-plugin-docs` bewacht sie) und `0028`
-(nur Windows, winget). Die Bestandsaufnahme steht in der Spec (§2).
-
-Offen ist nur noch die Umsetzung: Plan schreiben, Skill bauen,
-`sync-plugin-docs` erweitern. Fertig, wenn die Abnahmefälle der Spec (§8)
-durchlaufen: Ein Lauf auf einer frischen Maschine hinterlässt jeden Skill
-lauffähig, und ein zweiter Lauf meldet „Alles vorhanden."
-
 ---
 
 ## 3 · Model und Effort je Skill
