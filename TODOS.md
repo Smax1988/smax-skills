@@ -486,26 +486,6 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       wenn §7 den Fall der zurückgehaltenen Zeile benennt und ein Lauf mit einem
       neuen Command-Skill keinen unausführbaren `[j/n]`-Eintrag mehr erzeugt.
 
-### 6.8 · `setup`: Legt winget `python` vor den Store-Alias in den PATH?
-
-Ungeprüft: Der Skill `setup` installiert Python 3 über die Zeile
-`Python.Python.3.14` in `plugin/skills/dev/setup/requirements.md`. Ob das
-winget-Paket `python` im PATH vor den Platzhalter unter `WindowsApps`
-(Store-Alias) stellt, lässt sich nur an einer echten Installation klären. Sonst
-meldet die Prüfung nach dem Install fälschlich `fehlgeschlagen`. Fertig, wenn ein
-Lauf von `setup` auf einer frischen Maschine danach `python --version` mit
-`Python 3.` zeigt — oder die Zeile bzw. die Falle in `requirements.md` angepasst
-ist.
-
-### 6.9 · `setup`: Fehlendes winget sperrt auch die Zeile Playwright MCP
-
-In `plugin/skills/dev/setup/SKILL.md` §2 gilt: Fehlt winget, wird nichts
-installiert. Das trifft auch die Zeile Playwright MCP, obwohl `claude mcp add`
-kein winget braucht — strenger als nötig. **Optionen:** die Sperre nur für Zeilen
-mit Kind `program` (Playwright bliebe installierbar, sofern Node.js schon da
-ist), oder bewusst so lassen (einfacher, ein Grund weniger für Sonderfälle).
-Fertig, wenn §2 die Entscheidung festhält.
-
 ---
 
 ## 5 · Kleinkram

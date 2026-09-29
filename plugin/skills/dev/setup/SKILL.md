@@ -81,6 +81,10 @@ line `winget fehlt - "App Installer" aus dem Microsoft Store installieren, dann
 /smax:setup erneut.` and no confirmation list. That line is printed only if
 something is missing.
 
+This holds for the Playwright row too, although `claude mcp add` needs no
+winget: without winget its *Needs* row Node.js is rarely installable either, and
+the second run after installing App Installer takes it along.
+
 ## 3 - Check
 
 Every row of `requirements.md`, **in row order**. One script per row, the row's

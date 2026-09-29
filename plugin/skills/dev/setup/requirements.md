@@ -52,7 +52,11 @@ if ((Test-Path (Join-Path $bin 'dot.exe')) -and -not (($userPath -split ';') -co
 - **The Python alias from the Store.** A fresh Windows has a placeholder
   `python.exe` under `%LOCALAPPDATA%\Microsoft\WindowsApps` that opens the Store
   or prints nothing. `Get-Command python` finds it. Only the output
-  `Python 3.x` counts as present.
+  `Python 3.x` counts as present. After the install the alias no longer wins:
+  winget picks the python.org installer (type `burn`), which runs with
+  `PrependPath=1` and puts Python ahead of `WindowsApps` in both scopes. Only
+  the portable zip variant of the package would lose, because its link lands
+  in `WinGet\Links` behind the alias.
 - **`npx` servers on native Windows** do not connect when started directly;
   they need `cmd /c`. That is why the Playwright install wraps it.
 - **`claude` itself must be on `PATH`.** The Playwright check and install call
