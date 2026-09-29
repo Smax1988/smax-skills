@@ -12,7 +12,7 @@ sound right and are undecidable in the individual case. "Which file is the
 source?" is decidable: either you look it up, or you find there is nothing to
 look up. Two borderline cases where the other two criteria turn the wrong way:
 
-- The number in README §2.1 ("Diese **zehn** rufen keinen Skill…") sits in the
+- The number in README §2.1 ("These **eight** call no skill…") sits in the
   middle of prose and is **written silently** — its source is frontmatter and
   calls.
 - Which of the three `dev` groups a new skill belongs to sits in a **table** and

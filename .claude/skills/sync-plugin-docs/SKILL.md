@@ -13,9 +13,10 @@ This skill answers **one** question: *does this change need a documentation
 update?* Not: *is the documentation up to date?* That difference is the entire
 reason it is cheap enough to run before every commit.
 
-Your report is written in German — **including every text you propose** for
-`README.md` or `plugin/NOTICE.md`. Both land in German documents and are read by
-their author. The instructions you are reading are English; nothing you emit is
+Your report is written in German — it is read by the author. **Every text you
+propose** for `README.md` or `plugin/NOTICE.md` is English: both documents are
+English, and a proposal lands in them verbatim. The report around a proposal is
+output for its reader, the proposal is output for its document
 (`docs/decisions/0021-skill-texts-english-output-reader-language.md`).
 
 ## 1 · Comparison base
@@ -102,8 +103,8 @@ grep -n '^## \|^### \|<stripped>' plugin/NOTICE.md
 upstream — `## 1 · superpowers`, `## 2 · mattpocock/skills` — and each repeats
 the same three bucket headings. The last `###` above the hit gives the bucket,
 the last `##` above *that* gives the upstream, and only the pair identifies
-where the file sits. Report both: *„NOTICE §2 mattpocock → Substanziell
-umgebaut"*. Naming the bucket alone points at two places at once.
+where the file sits. Report both: *„NOTICE §2 mattpocock → Substantially
+rebuilt"*. Naming the bucket alone points at two places at once.
 
 **That one bucket, and no other, goes into the report under *Gemeldet*.** Files
 you did not change are not your subject, however close their rows sit. Whether
@@ -140,7 +141,7 @@ And a call is a call wherever in the directory it stands —
 `writing-skills/testing-skills-with-subagents.md` carries one. Narrow the command
 to `SKILL.md` and a call added next door produces no hunk at all: the file is
 still listed under *Betroffen* and still gets its NOTICE bucket, while
-Wer-ruft-wen is never checked.
+*Who calls whom* is never checked.
 
 **`plugin/.claude-plugin/` belongs to no skill**, so no per-skill diff reaches
 it. It gets its own, and §2 already told you whether there is anything to see:
@@ -152,10 +153,10 @@ git diff <base> -- plugin/.claude-plugin/
 | Diff hunk | Sources it can touch in `README.md` |
 |---|---|
 | `name:` | every occurrence of the name |
-| `argument-hint:` | §5 column *Argumente* |
-| `description:` | §2.1 column „wofür" |
-| `disable-model-invocation:` | §5 column *Trigger*; §2.1 / §2.2 membership; §4 *Geht gar nicht per Modell* |
-| body — a call added or removed | §5 Wer-ruft-wen; §2.1 / §2.2 membership; §4 *Läuft ohnehin von selbst* |
+| `argument-hint:` | §5 column *Arguments* |
+| `description:` | §2.1 column *Purpose* |
+| `disable-model-invocation:` | §5 column *Trigger*; §2.1 / §2.2 membership; §4 *Not invocable by the model* |
+| body — a call added or removed | §5 *Who calls whom*; §2.1 / §2.2 membership; §4 *Runs on its own anyway* |
 | body — anything else | **nothing** |
 | directory added, deleted or renamed | the directory-based sources, plus `plugin/NOTICE.md` |
 | `plugin.json` — `skills[]` | §5 group headings, §6.8 |
@@ -185,22 +186,22 @@ below.
 |---|---|---|
 | A skill's name, at every occurrence | `name:` in the frontmatter | **write** |
 | §5 column *Trigger* | `disable-model-invocation:` | **write** |
-| §5 column *Argumente* | `argument-hint:` | **write if verbatim**, else **ask** |
-| §2.1 column „wofür" | `description:` | **write if verbatim**, else **ask** |
+| §5 column *Arguments* | `argument-hint:` | **write if verbatim**, else **ask** |
+| §2.1 column *Purpose* | `description:` | **write if verbatim**, else **ask** |
 | Whether a row exists in §5 | directory under `plugin/skills/` | **write** |
 | Whether §5 holds a group table for a shipped directory, and what it is titled | `plugin/.claude-plugin/plugin.json` | **write** |
 | Which §5 table a skill goes in — the `personal` case | directory under `plugin/skills/` | **write** |
 | Which §5 table a skill goes in — the three `dev` subdivisions | **none** | **ask** |
 | That those three subdivisions exist at all, and what they are called | **none** | **ask** |
-| §5 Wer-ruft-wen | calls anywhere in the skill's directory — `SKILL.md` and its satellites | **write** |
+| §5 *Who calls whom* | calls anywhere in the skill's directory — `SKILL.md` and its satellites | **write** |
 | §2.1 membership **and the count** in its intro sentence | calls + `disable-model-invocation:` | **write** |
 | §2.2 membership | the same | membership **write**, surrounding sentence **ask** |
-| §4 *Läuft ohnehin von selbst*, who belongs | **none** | **ask** |
-| §4 *Geht gar nicht per Modell*, who belongs | `disable-model-invocation:` | membership **write**, text **ask** |
+| §4 *Runs on its own anyway*, who belongs | **none** | **ask** |
+| §4 *Not invocable by the model*, who belongs | `disable-model-invocation:` | membership **write**, text **ask** |
 | NOTICE: a file in a bucket has changed | `git diff --name-only <base>` + the lookup in NOTICE | **report** |
 | NOTICE: **which** upstream section and bucket it belongs in | — | **ask** |
-| NOTICE §3 *Ohne Upstream-Herkunft*, membership | **none** | **ask** |
-| NOTICE §3, which of its two lists a member goes in | *Älter als der Import* is closed — a new member can only join *Danach entstanden* | **write** |
+| NOTICE §3 *No upstream origin*, membership | **none** | **ask** |
+| NOTICE §3, which of its two lists a member goes in | *Older than the import* is closed — a new member can only join *Created afterwards* | **write** |
 | §3 entry table | **none** | **ask** |
 | §1 prose, §4 judgements, the satellite paragraphs, §6.x | **none** | **ask** |
 
@@ -219,11 +220,11 @@ Compare that against what stands in `README.md` **today**.
   one silently.
 - **Different** → the deviation is the author's, and so is its successor.
   `teach` carries `argument-hint: "What would you like to learn about?"` while §5
-  shows `` `[Thema]` ``. That shortening exists nowhere outside the README, and
+  shows `` `[topic]` ``. That shortening exists nowhere outside the README, and
   no rule derives it. Put old and new side by side.
 
-For §2.1 „wofür" the test comes out *different* nearly every time — the column
-holds a German one-liner while several `description:` fields are long English
+For §2.1 *Purpose* the test comes out *different* nearly every time — the
+column holds a short one-liner while several `description:` fields are long
 trigger lists. That is the expected outcome, not a failure of the test.
 
 **A brand-new row has nothing to compare against.** Create the row — that it
@@ -245,15 +246,15 @@ this table meets.
 `./skills/personal`. A new entry there means §5 needs a new heading, and the
 heading is named after the directory: substitution.
 
-The three `dev` tables — *Workflow-Kette*, *Denken & Doku*, *Kunden- &
-Web-Aufgaben* — appear in `plugin.json` nowhere. That they exist, what they are
+The three `dev` tables — *workflow chain*, *thinking & docs*, *client & web
+tasks* — appear in `plugin.json` nowhere. That they exist, what they are
 called, and which one a new skill belongs in are three README-internal decisions
 with no source outside the file. All three are **ask**.
 
 `personal` is the contrast that makes the rule visible: one shipped directory,
 one table, membership settled by where the directory sits. **Write.**
 
-### §4 *Läuft ohnehin von selbst* has no source, despite appearances
+### §4 *Runs on its own anyway* has no source, despite appearances
 
 „Is the skill called?" looks like one and is not — it is necessary, not
 sufficient. `commitMessage` is called by `writing-plans` and by
@@ -262,23 +263,23 @@ the list names skills the chain pulls in *on your behalf*, not every skill with
 an incoming call. That distinction is recorded in the README and nowhere else.
 Ask.
 
-Only *Geht gar nicht per Modell* follows from frontmatter.
+Only *Not invocable by the model* follows from frontmatter.
 
 **Why there is no „change type → section" table here.** Such a table would be
 this source list applied to today's section layout and cached. Its inputs — §2,
 §4, §5 — you read anyway, so it saves almost nothing, and it goes stale with
-every reorganisation. The source does not: `argument-hint` feeds the *Argumente*
+every reorganisation. The source does not: `argument-hint` feeds the *Arguments*
 column no matter which section or line holds it.
 
 ## 4 · The traps
 
 Ten places where the obvious reading is wrong.
 
-1. **§2.1 does not list all commands, only the standalone ones.** The repo has
-   fifteen commands; §2.1 lists eleven. The criterion is in the section's own intro
-   sentence: *„rufen keinen Skill und werden von keinem gerufen"*. The other four
-   are chain commands and live in §2.2. **Fourteen is a frontmatter count, not a
-   body-wide `grep -rl "disable-model-invocation: true"`** — that pattern also
+1. **§2.1 does not list all commands, only the standalone ones.** The
+   criterion is in the section's own intro sentence: *"call no skill and are
+   called by none"*. Every other command is a chain command and lives in §2.2,
+   so §2.1 and §2.2 together hold all of them. **Count commands by frontmatter,
+   not by a body-wide `grep -rl "disable-model-invocation: true"`** — that pattern also
    matches `writing-plans` and `writing-specs`, which mention the flag in prose
    without carrying it themselves.
 2. **A call can appear as a resolved path.** `finishing-a-development-branch`
@@ -286,28 +287,28 @@ Ten places where the obvious reading is wrong.
    without ever writing `smax:code-review`
    (`docs/decisions/0017-reviewer-template-as-resolved-path.md`).
    Searching only for `smax:` misses these systematically. Where such a call has
-   been recorded, Wer-ruft-wen marks it „(als Pfad)" — but the absence of that
+   been recorded, *Who calls whom* marks it „(as path)" — but the absence of that
    marker proves nothing, because the rows that are missing it are exactly the
    ones nobody found.
 3. **A mention is not a call.** `md-to-pdf` names `smax:handoff` and
-   `smax:replicate` as cross-references („dieselbe Regel gilt für…"). A hit on
+   `smax:replicate` as cross-references („the same rule applies to…"). A hit on
    `smax:<name>` only proves the name occurs.
-4. **Being called does not put a skill into §4 *Läuft ohnehin von selbst*.**
+4. **Being called does not put a skill into §4 *Runs on its own anyway*.**
    `commitMessage` is called by two skills and is not in that list. The list
    names what the chain pulls in on the user's behalf; the judgement behind it
-   lives in the README. Only *Geht gar nicht per Modell* follows from
+   lives in the README. Only *Not invocable by the model* follows from
    `disable-model-invocation`.
 5. **A new call can evict a command from §2.1.** If any skill starts calling a
    standalone command, it stops being standalone: it moves to §2.2 and the count
    in the intro sentence changes — without anyone touching its frontmatter.
 6. **NOTICE classifies files, not skills — with two exceptions.**
-   `debugging/SKILL.md` sits under *Substanziell umgebaut*,
-   `debugging/defense-in-depth.md` under *Unverändert übernommen*. The exceptions
-   are NOTICE §3 *Ohne Upstream-Herkunft*, which lists skills, and *Nicht
-   übernommen*,
+   `debugging/SKILL.md` sits under *Substantially rebuilt*,
+   `debugging/defense-in-depth.md` under *Taken over unchanged*. The exceptions
+   are NOTICE §3 *No upstream origin*, which lists skills, and *Not taken
+   over*,
    which is mixed prose — skills, whole directories and files side by side, and
    which exists **once per upstream section**.
-7. **Inside NOTICE §3 a different spelling applies**, not the „Pfade relativ zu
+7. **Inside NOTICE §3 a different spelling applies**, not the „Paths relative to
    `plugin/skills/dev/`" of the upstream sections: dev skills appear as a bare
    name (`mail-draft`), personal ones with a prefix (`personal/whats-for-lunch`).
 8. **Renaming is a token substitution and stays silent — except in the chain
@@ -324,7 +325,7 @@ Ten places where the obvious reading is wrong.
    against.
 10. **A NOTICE bucket name names two places, not one.** `plugin/NOTICE.md` has
     one section per upstream, and each carries the same three bucket headings.
-    „Steht unter *Substanziell umgebaut*" is therefore not an answer — the
+    „It is under *Substantially rebuilt*" is therefore not an answer — the
     upstream belongs in front of it. The trap is that a `grep` for the heading
     returns two hits and both look right.
 
@@ -334,18 +335,18 @@ by line number** — one names the callers of `domain-modeling`, the other the
 
 ## 5 · NOTICE: files, not skills
 
-`debugging/SKILL.md` sits under *Substanziell umgebaut*,
-`debugging/defense-in-depth.md` under *Unverändert übernommen*. Search at skill
+`debugging/SKILL.md` sits under *Substantially rebuilt*,
+`debugging/defense-in-depth.md` under *Taken over unchanged*. Search at skill
 level and you will present the wrong bucket every time.
 
 | Section | Bucket | Unit |
 |---|---|---|
-| NOTICE §1, §2 | *Unverändert übernommen* | file |
-| NOTICE §1, §2 | *Übernommen, punktuell ergänzt* | file |
-| NOTICE §1, §2 | *Substanziell umgebaut* | file |
-| NOTICE §1 | *Eingefrorene Kopie externer Dokumentation* | file (exactly one, as prose) |
-| NOTICE §1, §2 | *Nicht übernommen* | mixed, prose |
-| NOTICE §3 | *Ohne Upstream-Herkunft* | **skill**, in two prose name lists |
+| NOTICE §1, §2 | *Taken over unchanged* | file |
+| NOTICE §1, §2 | *Taken over, selectively extended* | file |
+| NOTICE §1, §2 | *Substantially rebuilt* | file |
+| NOTICE §1 | *Frozen copy of external documentation* | file (exactly one, as prose) |
+| NOTICE §1, §2 | *Not taken over* | mixed, prose |
+| NOTICE §3 | *No upstream origin* | **skill**, in two prose name lists |
 
 **Every bucket except the last two exists twice** — once under `## 1 ·
 superpowers`, once under `## 2 · mattpocock/skills`. An address is the pair, and
@@ -363,7 +364,7 @@ it.
 
 **A new skill → its entry is missing, and only you can see that.** `grep` cannot:
 a name that appears nowhere produces no hit. Report the gap and propose *NOTICE
-§3 Ohne Upstream-Herkunft → Danach entstanden* — but a newly vendored upstream
+§3 No upstream origin → Created afterwards* — but a newly vendored upstream
 skill does not belong there, so the section is the user's call. **Both upstreams
 are candidates**, and a rename at import hides which one: that is how five
 `mattpocock` skills sat in NOTICE §3 from its first day until it was corrected,
@@ -371,7 +372,7 @@ and why that section carries the warning. Mind the spelling: dev skills bare, pe
 prefix.
 
 **A deleted skill → remove every row for its files, and put its name in the
-NOTICE §3 *Ohne Upstream-Herkunft* list up for confirmation.** Two facts, two
+NOTICE §3 *No upstream origin* list up for confirmation.** Two facts, two
 verdicts, and the source list in §3 above already settled both. That rows exist
 for those files comes from the directory layout, and the directory now says the
 files are gone: **write**. Membership in NOTICE §3 is **ask** there, and this
@@ -415,7 +416,7 @@ rather than checking statements:
    nothing — it has to be reached through its source.
 2. **It cannot find what is wrong.** A name sitting where it no longer belongs —
    a call that was removed, a classification that has flipped — produces a hit and
-   no hint that the hit is stale. That is why Wer-ruft-wen is checked through its
+   no hint that the hit is stale. That is why *Who calls whom* is checked through its
    source and not through `grep`.
 
 Where the output of this search goes is not left to you: wherever an affected
@@ -437,7 +438,7 @@ The line is the source, not „table versus prose" and not „can I prove it".
 Those two sound right and cannot be decided in the moment; „which file is the
 source?" can. Two cases where the other two go wrong:
 
-- The count in §2.1 („Diese **zehn** rufen keinen Skill…") sits in the middle of
+- The count in §2.1 („These **eight** call no skill…") sits in the middle of
   prose and is **written silently** — its source is frontmatter plus calls.
 - Which of the three `dev` groups a new skill belongs to sits in a **table** and
   is nevertheless **asked** — that classification exists only in the README.
@@ -472,10 +473,10 @@ one of the rows above before you touch anything.
 and the question that separates them is a lookup, not a judgement: *does the
 change itself tell you what the new value is?*
 
-- A **deleted** skill tells you what §4 *Verdrängt* should say — the section goes.
+- A **deleted** skill tells you what §4 *Superseded* should say — the section goes.
   You have the value → *Zu übernehmen*, with `alt:` and `neu:`.
-- §5 names the proposal for a **missing NOTICE entry** — *Ohne Upstream-Herkunft
-  → Danach entstanden*. You have the value → *Zu übernehmen*. That the bucket is
+- §5 names the proposal for a **missing NOTICE entry** — *No upstream origin
+  → Created afterwards*. You have the value → *Zu übernehmen*. That the bucket is
   ultimately the author's call is what the question mark is for, not a reason to
   demote it.
 - Which of the three `dev` groups a **new** skill joins: three candidates and no
@@ -489,7 +490,7 @@ draft as *Zu übernehmen* forces you to invent the value, and a guess dressed as
 proposal is worse than the gap.
 
 Two rows of the source list carry **two** verdicts — §2.2 membership and §4
-*Geht gar nicht per Modell*, both „membership write, text ask". Those findings
+*Not invocable by the model*, both „membership write, text ask". Those findings
 appear **twice**, once per section. The split is the point: the membership is
 derivable, the sentence around it is not.
 
@@ -580,7 +581,7 @@ reports the asking accurately and never mentions the writing.
 | „A question costs time" | It arises for zero to one item per run. A silently reworded paragraph costs a review in which nobody looks any more. |
 | „I matched the author's voice" | Then the error is undiscoverable. That is worse, not better. |
 | „It is only one word" | For a rename: correct, that is a token substitution and stays silent. For anything else, „only one word" is the excuse, not the analysis. |
-| „The frontmatter says it, so I copied it across" | Two columns *render* their source instead of copying it. Run the verbatim test first. A column that has always shown `` `[Thema]` `` does not want `"What would you like to learn about?"` in it. |
+| „The frontmatter says it, so I copied it across" | Two columns *render* their source instead of copying it. Run the verbatim test first. A column that has always shown `` `[topic]` `` does not want `"What would you like to learn about?"` in it. |
 | „No source names this, so I will propose something" | Then propose nothing. *Gemeldet* exists for exactly this: say what you found and where, and let the author supply the value. |
 | „The draft is in the file already, otherwise the table is incomplete" / „…otherwise the commit hits a half-finished table" | Then it is written, and the question mark behind it changes nothing: a yes confirms what already stands there. An honest `alt:` and your `neu:` would read identically — that is the tell. Empty cell in the file, draft in the report. |
 | „A new row has no old value to leave standing" | `alt: (leer)` is the old value. The cell being empty is exactly the state you are asking permission to change. |

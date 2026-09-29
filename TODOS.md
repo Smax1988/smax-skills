@@ -89,7 +89,7 @@ einer entsteht.
 - [ ] **4.1.1 · Den Ist-Zustand vollständig erheben.** Nicht nur „wer ruft
       TDD", sondern: An welchen Stellen der Kette entsteht heute tatsächlich ein
       Test, wodurch ausgelöst, und was passiert, wenn der Plan an der Stelle
-      schweigt? Die README-Tabelle *Wer ruft wen* ist dabei **keine** zulässige
+      schweigt? Die README-Tabelle *Who calls whom* ist dabei **keine** zulässige
       Quelle — sie ist aus den Skill-Dateien abgeleitet, sie gegen sich selbst
       zu prüfen ist ein Zirkel. Gegen die Skill-Dateien prüfen.
       **`grep` allein reicht dort nicht:** Ein Treffer kann in einer Code-Fence
@@ -279,7 +279,7 @@ und abweichend zu schreiben.
 - [ ] **3.1.4 · Als Decision festhalten** — das Kriterium und die Fälle, in
       denen bewusst davon abgewichen wurde.
 - [ ] **3.1.5 · README aufnehmen**, sobald es steht: §5 wäre die Stelle, je
-      eine Spalte *Model* und *Effort* neben *Argumente* und *Trigger* — oder
+      eine Spalte *Model* und *Effort* neben *Arguments* und *Trigger* — oder
       eine gemeinsame, wenn vier Spalten die Tabelle sprengen. **Achtung,
       Kollision:** Das wären abgeleitete Spalten, die `sync-plugin-docs`
       mitpflegen muss — die **Quellenliste** braucht dann eine eigene Zeile je
@@ -300,7 +300,7 @@ und abweichend zu schreiben.
 ### 6.2 · Die Gruppe `dev` in zwei Gruppen teilen
 
 `plugin/skills/dev/` hält heute 27 Skills. README §5 zeigt sie bereits in drei
-Tabellen — *Workflow-Kette*, *Denken & Doku*, *Kunden- & Web-Aufgaben* —, aber
+Tabellen — *workflow chain*, *thinking & docs*, *client & web tasks* —, aber
 das ist reine Darstellung: Das Verzeichnis ist eines, und `plugin.json` kennt
 nur `./skills/dev` und `./skills/personal`.
 
@@ -496,7 +496,7 @@ Erst die Fix-Welle schob eine Controller-Aufgabe in einen Implementer.
 **Der Fall:** Ein neuer Command-Skill braucht eine Zeile in einer der drei
 `dev`-Tabellen in README §5. Welche Tabelle, hat keine Quelle — die Zeile wird
 deshalb richtig *nicht* angelegt und landet unter *Gemeldet*. Ihre Zelle
-*Argumente* hat dagegen einen Wert (`argument-hint:`), und der Lauf legt sie
+*Arguments* hat dagegen einen Wert (`argument-hint:`), und der Lauf legt sie
 unter *Zu übernehmen* vor, mit `alt: (leer — Zeile existiert noch nicht)`.
 
 **Warum das ein Problem ist:** Ein „j" auf diesen Eintrag lässt sich nicht

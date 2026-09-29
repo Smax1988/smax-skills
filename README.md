@@ -1,44 +1,43 @@
-# smax — persönliches Skill-Plugin
+# smax — personal skill plugin
 
-> ## ⚠️ EXPERIMENTELL
+> ## ⚠️ EXPERIMENTAL
 >
-> Im Einsatz seit dem 25.07.2026 — also seit gut einer Woche. Vieles ändert sich
-> noch laufend: Skill-Zuschnitte, der Verlauf der Ketten, Pfadkonventionen,
-> welche Schritte nachfragen und welche nicht. **Erwarte Brüche zwischen zwei
-> Commits** und verlass dich nicht darauf, dass ein Ablauf morgen aussieht wie
-> heute.
+> In use since 2026-07-25. A lot is still changing all the
+> time: how skills are cut, how the chains run, path conventions, which steps
+> ask and which do not. **Expect breakage between two commits** and do not rely
+> on a flow looking tomorrow the way it looks today.
 >
-> Was bereits bewusst entschieden *ist*, steht in [`docs/decisions/`](./docs/decisions/)
-> — das ist der stabile Kern. Was gerade offen ist, steht in
-> [`TODOS.md`](./TODOS.md). Alles andere ist in Bewegung.
+> What *has* been deliberately decided is in [`docs/decisions/`](./docs/decisions/)
+> — that is the stable core. What is currently open is in
+> [`TODOS.md`](./TODOS.md). Everything else is in motion.
 
-Mein persönliches Claude-Code-Plugin. Skills unter `plugin/skills/dev/` und `plugin/skills/personal/`, verteilt über einen eigenen Marketplace: dieses Repo **ist** der Marketplace, das Plugin liegt darin unter `plugin/`.
+My personal Claude Code plugin. Skills under `plugin/skills/dev/` and `plugin/skills/personal/`, distributed through a marketplace of its own: this repo **is** the marketplace, and the plugin lives inside it under `plugin/`.
 
-> Marketplace `smax-skills` · Plugin `smax` · Aufruf-Präfix `/smax:`
+> Marketplace `smax-skills` · Plugin `smax` · Invocation prefix `/smax:`
 
-Alles außerhalb von `plugin/` — insbesondere `docs/` — wird **nicht** ausgeliefert.
+Everything outside `plugin/` — `docs/` in particular — is **not** shipped.
 
 ## Installation
 
-Das Repo ist öffentlich — eintragen kann es jeder:
+The repo is public — anyone can add it:
 
 ```
 /plugin marketplace add https://github.com/Smax1988/smax-skills.git
 /plugin install smax@smax-skills
 ```
 
-Aktualisieren mit `/plugin marketplace update smax-skills`, dann `/reload-plugins`. Wer selbst am Plugin entwickelt, nimmt stattdessen die lokale Quelle aus [§6.2](#62-setup-der-dev-maschine).
+Update with `/plugin marketplace update smax-skills`, then `/reload-plugins`. If you develop on the plugin yourself, use the local source from [§6.2](#62-setting-up-the-dev-machine) instead.
 
-Firmen- und kundenspezifische Skills stehen hier bewusst nicht: Sie liegen im internen Plugin `cnx` (Marketplace `cnx-skills`, Azure DevOps). Warum: `docs/decisions/0025-company-skills-in-separate-plugin.md`.
+Company- and client-specific skills are deliberately not here: they live in the internal plugin `cnx` (marketplace `cnx-skills`, Azure DevOps). Why: `docs/decisions/0025-company-skills-in-separate-plugin.md`.
 
 ---
 
-# 1 · Der Workflow
+# 1 · The workflow
 
-## 1.1 Von der Idee bis zum gelandeten Branch
+## 1.1 From idea to landed branch
 
 ```
-  Idee                     Entwurf                Plan              Umsetzung           Landung
+  Idea                     Draft                  Plan              Implementation      Landing
                                                                                        
   brainstorming ──┐                                                                    
   sharpen-me ─────┼──→ writing-specs ──→ writing-plans ──┬─→ subagent-driven-dev ──┐   
@@ -47,201 +46,201 @@ Firmen- und kundenspezifische Skills stehen hier bewusst nicht: Sie liegen im in
        ▲                    ▲                  ▲                                   │    branch
        └────────────────────┴──────────────────┴───────────────────────────────────┘         │
                     domain-modeling  ·  sync-solution-items                                  ↓
-                    (Querschnitt, von überall gerufen)                              commitMessage
+                    (cross-cutting, called from everywhere)                         commitMessage
 ```
 
-Getippt wird **ein** Einstieg. Den Rest zieht die Kette selbst nach.
+You type **one** entry point. The chain pulls in the rest by itself.
 
-Jedes Glied ist aber auch **einzeln betretbar** — eine Session kann jederzeit enden und am nächsten Tag steigt man mittendrin wieder ein. Kein Skill setzt voraus, dass sein Vorgänger in derselben Session lief (siehe `docs/decisions/0016-skills-are-cold-start-capable.md`).
+Every link can also be **entered on its own**, though — a session can end at any point, and the next day you pick up somewhere in the middle. No skill assumes its predecessor ran in the same session (see `docs/decisions/0016-skills-are-cold-start-capable.md`).
 
-## 1.2 Was wo landet
+## 1.2 What lands where
 
-Alles unter `docs/` gehört ins Repo und wird committet. `.smax/` und `.worktrees/` sind git-ignorierter Scratch. `C:\Temp` verlässt das Projekt bewusst.
+Everything under `docs/` belongs in the repo and gets committed. `.smax/` and `.worktrees/` are git-ignored scratch. `C:\Temp` deliberately leaves the project.
 
-| Pfad | Wer legt es an | Wann |
+| Path | Created by | When |
 |---|---|---|
-| `docs/00_Analysis/<Slug>/ANALYSIS-<Slug>-DDMMYYYY.md` | `writing-specs` | Bewertung von etwas Bestehendem, ohne Bauentscheidung |
-| `docs/01_Specs/<Slug>/SPEC-<Slug>-DDMMYYYY.md` | `writing-specs` | Entwurf für etwas, das gebaut wird |
-| `docs/02_Plans/<Slug>/PLAN-<Slug>-DDMMYYYY.md` | `writing-plans` | Umsetzungsplan, Task für Task |
-| `docs/03_DbChanges/<Slug>/DDMMYYYY-<Slug>.forward.sql` + `.rollback.sql` | Implementer, als Task-Schritt | wenn der Plan Schema-Änderungen enthält — Datum hier **Präfix**, nicht Suffix |
-| `CONTEXT.md` (Repo-Root) · ggf. `CONTEXT-MAP.md` | `domain-modeling` | sobald der erste Begriff feststeht — sofort, nicht am Sessionende |
-| `docs/decisions/NNNN-slug.md` | `domain-modeling` | pro Entscheidung, die schwer umkehrbar + ohne Kontext überraschend + Ergebnis eines echten Trade-offs ist |
-| `CLAUDE.md` (Projekt) | `domain-modeling` | zwei Blöcke: *Domänensprache* (importiert `@CONTEXT.md`) und *Entscheidungen* (lehrt das Zugriffsmuster, importiert **nichts**) |
-| `.smax/sdd/<plan-basename>/` | `subagent-driven-development` | Ledger `progress.md`, `task-N-brief.md`, `task-N-report.md`, Review-Pakete. Git-ignoriert. Wird von `finishing-a-development-branch` gelöscht, **erst nachdem** der Branch gelandet ist |
-| `.worktrees/<branch>/` | `using-git-worktrees` | isolierter Arbeitsbereich, falls kein nativer Worktree da ist |
-| `C:\Temp\HANDOFF-<name>.md` | `handoff` | Session-Übergabe — beschreibt eine Session, nicht den Code, gehört deshalb nicht ins Repo |
-| `C:\Temp\REPLICATE-<name>.md` | `replicate` | Rezept für System-/Config-Änderungen dieser Session |
-| `C:\Temp\<name>.pdf` | `md-to-pdf` | erzeugtes Artefakt, kein Quelltext |
-| `MISSION.md`, `RESOURCES.md`, `NOTES.md`, `lessons/`, `reference/`, `learning-records/`, `assets/` | `teach` | im jeweiligen Lern-Workspace |
+| `docs/00_Analysis/<Slug>/ANALYSIS-<Slug>-DDMMYYYY.md` | `writing-specs` | assessment of something existing, without a build decision |
+| `docs/01_Specs/<Slug>/SPEC-<Slug>-DDMMYYYY.md` | `writing-specs` | design for something that will be built |
+| `docs/02_Plans/<Slug>/PLAN-<Slug>-DDMMYYYY.md` | `writing-plans` | implementation plan, task by task |
+| `docs/03_DbChanges/<Slug>/DDMMYYYY-<Slug>.forward.sql` + `.rollback.sql` | implementer, as a task step | when the plan contains schema changes — here the date is a **prefix**, not a suffix |
+| `CONTEXT.md` (repo root) · possibly `CONTEXT-MAP.md` | `domain-modeling` | as soon as the first term is settled — immediately, not at the end of the session |
+| `docs/decisions/NNNN-slug.md` | `domain-modeling` | per decision that is hard to reverse + surprising without context + the result of a real trade-off |
+| `CLAUDE.md` (project) | `domain-modeling` | two blocks: *Domänensprache* (imports `@CONTEXT.md`) and *Entscheidungen* (teaches the access pattern, imports **nothing**) |
+| `.smax/sdd/<plan-basename>/` | `subagent-driven-development` | ledger `progress.md`, `task-N-brief.md`, `task-N-report.md`, review packages. Git-ignored. Deleted by `finishing-a-development-branch`, **only after** the branch has landed |
+| `.worktrees/<branch>/` | `using-git-worktrees` | isolated workspace, if no native worktree is available |
+| `C:\Temp\HANDOFF-<name>.md` | `handoff` | session handoff — describes a session, not the code, and therefore does not belong in the repo |
+| `C:\Temp\REPLICATE-<name>.md` | `replicate` | recipe for this session's system/config changes |
+| `C:\Temp\<name>.pdf` | `md-to-pdf` | generated artifact, not source |
+| `MISSION.md`, `RESOURCES.md`, `NOTES.md`, `lessons/`, `reference/`, `learning-records/`, `assets/` | `teach` | in the respective learning workspace |
 
-Der **PascalCase-Slug** (`TipAllowance`) wird einmal in `writing-specs` festgelegt und von allen nachgelagerten Skills unverändert übernommen. Das **Datumssuffix** ist funktional: `subagent-driven-development` leitet seinen Workspace-Pfad aus dem Plan-Dateinamen ab — ohne Datum teilen sich zwei Pläne desselben Themas ein Ledger.
+The **PascalCase slug** (`TipAllowance`) is set once in `writing-specs` and carried over unchanged by every downstream skill. The **date suffix** is functional: `subagent-driven-development` derives its workspace path from the plan's file name — without the date, two plans on the same topic share one ledger.
 
-`Archive/` wird von keinem Skill beschrieben und nie als aktueller Kontext gelesen. Archivieren ist Handarbeit.
+`Archive/` is written by no skill and never read as current context. Archiving is manual work.
 
-## 1.3 Was von selbst läuft — und was gefragt wird
+## 1.3 What runs on its own — and what asks first
 
-**Ohne Rückfrage:**
+**Without asking:**
 
-- Task-Commits auf dem Feature-Branch (der wird ohnehin gesquasht und gelöscht)
-- Einträge in `CONTEXT.md` und `docs/decisions/`, sobald etwas feststeht
-- Ergänzungen an der Projekt-`CLAUDE.md` — aber nie stillschweigend, es wird immer gesagt was geändert wurde
-- Erkennung eines vorhandenen Worktrees, Setup, Baseline-Tests
-- Dispatch von Implementer- und Reviewer-Subagents
-- der *Lauf* von `sync-solution-items`, wenn im Repo-Root eine `.slnx` liegt — den Commit macht der aufrufende Skill, und direkt aufgerufen committet es gar nicht
+- task commits on the feature branch (it gets squashed and deleted anyway)
+- entries in `CONTEXT.md` and `docs/decisions/` as soon as something is settled
+- additions to the project `CLAUDE.md` — but never silently, what was changed is always stated
+- detecting an existing worktree, setup, baseline tests
+- dispatching implementer and reviewer subagents
+- the *run* of `sync-solution-items` when a `.slnx` sits in the repo root — the calling skill makes the commit, and called directly it does not commit at all
 
-**Mit Rückfrage** — alles, was den Zustand außerhalb des Wegwerf-Branches ändert oder History zerstört (`docs/decisions/0008-confirm-git-actions-outside-branch.md`):
+**With asking** — anything that changes state outside the throwaway branch or destroys history (`docs/decisions/0008-confirm-git-actions-outside-branch.md`):
 
-| Aktion | wo |
+| Action | Where |
 |---|---|
-| Der eine Design-Commit für Spec + Glossar + Decisions + Plan | Ende von `writing-plans` |
-| Ausnahme-Commit, wenn die Kette schon am Spec-Gate endet | `writing-specs` |
-| Squash-Commit auf den Base-Branch | `finishing-a-development-branch` |
-| `git branch -D <feature>` | dito, separat vom Commit |
-| `git push` | dito, separat |
-| Pull Request anlegen | dito, **noch einmal separat** vom Push |
-| Arbeit verwerfen | dito — nur gegen das getippte Wort `discard` |
-| Worktree anlegen · `.gitignore`-Zeile committen | `using-git-worktrees` |
+| The one design commit for spec + glossary + decisions + plan | end of `writing-plans` |
+| Exception commit, when the chain already ends at the spec gate | `writing-specs` |
+| Squash commit onto the base branch | `finishing-a-development-branch` |
+| `git branch -D <feature>` | same, separate from the commit |
+| `git push` | same, separate |
+| Opening a pull request | same, **separate once more** from the push |
+| Discarding work | same — only against the typed word `discard` |
+| Creating a worktree · committing the `.gitignore` line | `using-git-worktrees` |
 
-Ein Ja zu einer dieser Aktionen ist kein Ja zur nächsten.
+A yes to one of these actions is not a yes to the next.
 
-## 1.4 Die Gates
+## 1.4 The gates
 
-Drei Stellen blocken, statt nur zu erinnern:
+Three places block instead of merely reminding:
 
-- **Glossar-Gate** (`writing-specs`, `writing-plans`): kein Dokument und kein Plan, solange gepinnte Begriffe nicht in `CONTEXT.md` stehen. Eine Terminologie-Tabelle *im* Spec zählt nicht — vier Mechanismen lesen `CONTEXT.md`, keiner liest das Spec.
-- **Review-Gate** (`finishing-a-development-branch`): kein Branch erreicht das Merge-Menü ungereviewt. Als Nachweis zählt nur eine Ledger-Zeile `Final review: clean (HEAD <sha7>)`, deren SHA auf den aktuellen HEAD passt — keine Erinnerung aus dem Gespräch.
-- **Dokument-Reviewer** (`writing-specs`, `writing-plans`): ein frischer Subagent liest gegen, `Issues` werden behoben, genau **ein** Re-Review, dann entscheidet der Mensch.
+- **Glossary gate** (`writing-specs`, `writing-plans`): no document and no plan while pinned terms are missing from `CONTEXT.md`. A terminology table *inside* the spec does not count — four mechanisms read `CONTEXT.md`, none reads the spec.
+- **Review gate** (`finishing-a-development-branch`): no branch reaches the merge menu unreviewed. The only accepted evidence is a ledger line `Final review: clean (HEAD <sha7>)` whose SHA matches the current HEAD — not a recollection from the conversation.
+- **Document reviewer** (`writing-specs`, `writing-plans`): a fresh subagent proofreads, `Issues` get fixed, exactly **one** re-review, then the human decides.
 
-## 1.5 Decisions — der stabile Kern
+## 1.5 Decisions — the stable core
 
-`docs/decisions/` hält fest, **was hier absichtlich vom naheliegenden Weg abweicht**. Je eine Datei `NNNN-slug.md`, geschrieben über `smax:domain-modeling`. Kurz — ein bis drei Sätze reichen; der Wert liegt darin, *dass* entschieden wurde und *warum*, nicht in ausgefüllten Abschnitten.
+`docs/decisions/` records **what deliberately deviates from the obvious path here**. One file `NNNN-slug.md` each, written via `smax:domain-modeling`. Short — one to three sentences are enough; the value lies in *that* something was decided and *why*, not in filled-in sections.
 
-**Eine Decision entsteht nur, wenn alle drei zutreffen:**
+**A decision is only created when all three apply:**
 
-1. **Schwer umkehrbar** — es später anders zu machen kostet spürbar
-2. **Ohne Kontext überraschend** — ein späterer Leser fragt sich „warum um alles in der Welt so?"
-3. **Ergebnis eines echten Trade-offs** — es gab Alternativen, eine wurde aus Gründen gewählt
+1. **Hard to reverse** — doing it differently later has a noticeable cost
+2. **Surprising without context** — a later reader wonders "why on earth like this?"
+3. **Result of a real trade-off** — there were alternatives, one was chosen for reasons
 
-Fehlt eines davon, entsteht keine. Sonst verwässert das Verzeichnis zu einem Änderungsprotokoll.
+If any one is missing, none is created. Otherwise the directory dilutes into a changelog.
 
-**Der Zugriff ist bewusst sparsam.** Der Dateiname ist der Index: `ls docs/decisions/`, nach Titel urteilen, null bis zwei Dateien öffnen. **Nie das ganze Verzeichnis lesen** — es wächst unbegrenzt, und alles zu laden verdrängt genau den Kontext, der für die Aufgabe gebraucht wird.
+**Access is deliberately sparing.** The file name is the index: `ls docs/decisions/`, judge by title, open zero to two files. **Never read the whole directory** — it grows without bound, and loading everything crowds out exactly the context the task needs.
 
-**Gelesen wird an vier Stellen, zu vier verschiedenen Zeitpunkten:**
+**It is read in four places, at four different moments:**
 
-| Wo | Wann genau |
+| Where | When exactly |
 |---|---|
-| `brainstorming` | Schritt 1 der Checkliste — vor der ersten Rückfrage, vor jedem Entwurf |
-| `writing-plans` | beim Schreiben des Plan-Headers, im `Global Constraints`-Block — vor den Tasks |
-| `debugging` | bevor eine mechanische Ursachenerklärung akzeptiert wird — nicht am Anfang der Suche |
-| `code-reviewer.md` | im dispatchten Reviewer-Subagenten, während er den Diff prüft |
+| `brainstorming` | step 1 of the checklist — before the first question, before any draft |
+| `writing-plans` | when writing the plan header, in the `Global Constraints` block — before the tasks |
+| `debugging` | before a mechanical explanation of the cause is accepted — not at the start of the search |
+| `code-reviewer.md` | in the dispatched reviewer subagent, while it checks the diff |
 
-Die Reviewer-Vorlage wird aus **drei** Richtungen dispatcht: getipptes `/smax:code-review`, das Review-Gate in `finishing-a-development-branch`, und das Whole-Branch-Review am Ende von `subagent-driven-development`. Die letzten beiden laufen ohne Zutun — der Check erreicht den Code also öfter, als „`code-review` ist ein Command" vermuten lässt.
+The reviewer template is dispatched from **three** directions: a typed `/smax:code-review`, the review gate in `finishing-a-development-branch`, and the whole-branch review at the end of `subagent-driven-development`. The last two run without any action on your part — so the check reaches the code more often than "`code-review` is a command" would suggest.
 
-**Der Alltagsfall wird von keinem der vier erfasst** — „mach mal X", ein schneller Refactor, kein Skill im Spiel. Dafür trägt `domain-modeling` das Zugriffsmuster zusätzlich in die Projekt-`CLAUDE.md` ein, die immer im Kontext ist. Importiert wird dabei **nichts**: Der Block lehrt den Zugriff, er lädt keine Inhalte. Er hat allerdings auch keinen festen Auslöser, sondern beschreibt Situationen („bevor du eine Architektur- oder Designfrage entscheidest", „bevor du etwas reparierst, das merkwürdig gebaut aussieht"), auf die der Agent selbst kommen muss. Das ist die schwächste Stelle der Kette — und die bewusst in Kauf genommene, weil die Alternative ein Import wäre, der in jeder Session Kontext kostet.
+**The everyday case is covered by none of the four** — "just do X", a quick refactor, no skill involved. For that, `domain-modeling` additionally writes the access pattern into the project `CLAUDE.md`, which is always in context. **Nothing** is imported: the block teaches the access, it does not load content. It also has no fixed trigger, though; it describes situations ("before you decide an architecture or design question", "before you fix something that looks oddly built") that the agent has to recognise by itself. That is the weakest point of the chain — and the one knowingly accepted, because the alternative would be an import that costs context in every session.
 
-**Überstimmen ist erlaubt, stilles Übergehen nicht.** Läuft ein Vorschlag einer Decision zuwider, wird das mit Dateinamen gesagt, bevor er umgesetzt wird. Wird sie tatsächlich umgeworfen, bekommt die alte den Status `superseded by Decision-NNNN` — gelöscht wird nie. Einträge mit `superseded` oder `deprecated` binden nicht mehr.
+**Overruling is allowed, silently ignoring is not.** If a proposal runs against a decision, that is said, with the file name, before it is implemented. If the decision is actually overturned, the old one gets the status `superseded by Decision-NNNN` — nothing is ever deleted. Entries marked `superseded` or `deprecated` are no longer binding.
 
-> **Bekannte Lücke:** Es gibt **keine** Prüfung von Decisions *gegeneinander*. Alle vier Lesestellen prüfen etwas anderes gegen eine Decision — Entwurf, Diff, Code, Reviewer-Einwand. Ob zwei Decisions einander widersprechen, fällt niemandem auf, außer beide werden zufällig zusammen geöffnet. Das ist strukturell so: Ein vollständiger Konsistenzcheck müsste alle Dateien lesen, und genau das verbietet das Zugriffsmuster oben. Wer die Konsistenz prüfen will, macht das als bewussten, seltenen Durchgang — nicht als Dauerregel.
+> **Known gap:** there is **no** check of decisions *against each other*. All four read sites check something else against a decision — draft, diff, code, reviewer objection. Whether two decisions contradict each other goes unnoticed unless both happen to be opened together. That is structural: a complete consistency check would have to read every file, and that is exactly what the access pattern above forbids. Anyone who wants to check consistency does it as a deliberate, rare pass — not as a standing rule.
 
 ---
 
-# 2 · Die Commands
+# 2 · The commands
 
-Die zweite Hälfte des Plugins. Die Kette oben ist der lange Weg von der Idee zum gelandeten Branch — daneben stehen Commands, die je **eine abgeschlossene Aufgabe** lösen und mit dem Workflow nichts zu tun haben. Kein Beiwerk: Im Alltag tippe ich sie öfter als jeden Kettenschritt.
+The second half of the plugin. The chain above is the long road from idea to landed branch — alongside it stand commands that each solve **one self-contained task** and have nothing to do with the workflow. Not an add-on: day to day I type them more often than any chain step.
 
-**Ein Command ist ein Skill mit `disable-model-invocation: true`** — starten kann ihn **nur ich**, Claude nicht, auch nicht aus einem anderen Skill heraus. Ein Plugin kann keine echten Slash-Commands ausliefern (die gibt es nur unter `~/.claude/commands/`), also ist das geflaggte Skill der Weg dorthin. Der Aufruf ist derselbe: `/smax:<name>`.
+**A command is a skill with `disable-model-invocation: true`** — **only I** can start it, Claude cannot, not even from inside another skill. A plugin cannot ship real slash commands (those only exist under `~/.claude/commands/`), so the flagged skill is the way to get there. Invocation is the same: `/smax:<name>`.
 
-## 2.1 Eigenständig, ohne Kette
+## 2.1 Standalone, outside the chain
 
-Diese acht rufen keinen Skill und werden von keinem gerufen. Getippt wird der Name, fertig. Argumente stehen in den Tabellen in §5.
+These eight call no skill and are called by none. You type the name, done. Arguments are in the tables in §5.
 
-| Command | wofür |
+| Command | Purpose |
 |---|---|
-| `replicate` | System- und Config-Änderungen dieser Session als nachvollziehbares Rezept, um sie anderswo nachzuziehen |
-| `teach` | ein Thema geführt lernen statt es bauen zu lassen — mit Mission, Glossar und Learning-Records |
-| `infographic-page` | ein Thema als eigenständige HTML-Seite erklären (dunkles Layout, ausklappbare Abschnitte, eine Datei) |
-| `data-model-diagram` | ein Datenmodell als eigenständige HTML-Seite zeichnen — Tabellenkarten mit Schlüsseln, starre Beziehungslinien, zugeklappt lesbar, mit Druckmodus |
-| `proad-job-report` | aus einem Commit den deutschen Arbeitsbericht erzeugen, der beim Kunden auf der Rechnung landet |
-| `nano-vs-colors` | Syntax-Highlighting für `nano` unter Git Bash einrichten oder auf eine weitere Maschine mitnehmen |
-| `find-beer-deals` | aktuelle Bier-Aktionen in der Nähe suchen |
-| `whats-for-lunch` | die heutigen Mittagsangebote der Stamm-Lokale zusammenfassen |
+| `replicate` | this session's system and config changes as a traceable recipe, to reproduce them elsewhere |
+| `teach` | learn a topic guided instead of having it built — with mission, glossary and learning records |
+| `infographic-page` | explain a topic as a standalone HTML page (dark layout, collapsible sections, one file) |
+| `data-model-diagram` | draw a data model as a standalone HTML page — table cards with keys, rigid relationship lines, readable collapsed, with print mode |
+| `proad-job-report` | turn a commit into the German work report that ends up on the client's invoice |
+| `nano-vs-colors` | set up syntax highlighting for `nano` under Git Bash, or carry it over to another machine |
+| `find-beer-deals` | find current beer deals nearby |
+| `whats-for-lunch` | summarise today's lunch specials at the regular spots |
 
-## 2.2 Commands, die nicht allein stehen
+## 2.2 Commands that do not stand alone
 
-`brainstorming`, `code-review`, `sharpen-me` und `sharpen-with-docs` tragen dasselbe Flag, sind aber Glieder des Workflows — sie stehen in §1. Aus genau dieser Teilmenge entsteht die Einschränkung in [§4 · Geht gar nicht per Modell](#geht-gar-nicht-per-modell): Ein Skill kann einen Command nicht aufrufen, auch wenn die Kette an der Stelle weiterlaufen müsste.
+`brainstorming`, `code-review`, `sharpen-me` and `sharpen-with-docs` carry the same flag but are links of the workflow — they are in §1. Exactly this subset gives rise to the restriction in [§4 · Not invocable by the model](#not-invocable-by-the-model): a skill cannot invoke a command, even where the chain would have to continue at that point.
 
-`lap-training` und `handoff` tragen das Flag ebenfalls und stehen seit dem Handoff-Angebot am Sessionende nicht mehr in §2.1: `lap-training` ruft `handoff` als Pfad auf, damit trifft „ruft keinen Skill und wird von keinem gerufen" auf keinen von beiden mehr zu. Glieder des Workflows in §1 sind sie nicht.
+`lap-training` and `handoff` carry the flag as well and have not been in §2.1 since the handoff offer at the end of a session: `lap-training` calls `handoff` as a path, so "calls no skill and is called by none" no longer holds for either. They are not links of the workflow in §1.
 
-**Nicht dazu gehört `dispatching-parallel-agents`** — kettenlos, aber kein Command: Claude darf es selbst auslösen, sobald mehrere unabhängige Aufgaben anstehen.
+**Not part of this group: `dispatching-parallel-agents`** — outside any chain, but not a command: Claude may trigger it by itself as soon as several independent tasks are pending.
 
 ---
 
-# 3 · Wo steige ich ein?
+# 3 · Where do I start?
 
-| Situation | Einstieg | Was daraus wird |
+| Situation | Entry point | What follows |
 |---|---|---|
-| **Idee, aber noch kein Bild davon.** | `/smax:brainstorming` | Exploration → `domain-modeling` → `writing-specs` |
-| **Plan/Entscheidung steht, hält sie?** | `/smax:sharpen-me` | Schonungsloses Interview, Frage für Frage → Angebot, es als SPEC festzuhalten |
-| **Dasselbe, Domäne soll mitwachsen.** | `/smax:sharpen-with-docs` | wie oben, pflegt nebenbei `CONTEXT.md` und Decisions |
-| **Begriff festzurren oder Entscheidung festhalten.** | `/smax:domain-modeling` | `CONTEXT.md`, `docs/decisions/NNNN-slug.md`, Zugriffsmuster in der Projekt-`CLAUDE.md` |
-| **Spec steht, jetzt bauen.** | `/smax:writing-plans` | Plan → `using-git-worktrees` → SDD oder `executing-plans` |
-| **Plan steht, abarbeiten.** | `/smax:subagent-driven-development` | Task je Subagent, Controller prüft jeden Report, ein Whole-Branch-Review am Ende |
-| **Etwas ist kaputt.** | `/smax:debugging` | Ursache vor Fix → `test-driven-development`, `verification-before-completion` |
-| **Fertig, wie kommt es rein?** | `/smax:finishing-a-development-branch` | Review-Gate, Squash-Landung → `commitMessage` |
-| **Nur die Commit-Message.** | `/smax:commitMessage` | semantische Message; bei Squash-Branches mit Body |
-| **Skill schreiben oder ändern.** | `/smax:writing-skills` | Aufbau, Testen mit Subagents |
-| **Etwas verstehen, nicht bauen.** | `/smax:teach` | geführtes Lernen mit Mission, Glossar, Learning-Records |
-| **Übergabe an die nächste Session.** | `/smax:handoff` | selbsttragendes Dokument nach `C:\Temp` |
-| **Maschinen-Änderungen nachziehen.** | `/smax:replicate` | Re-Apply-Rezept nach `C:\Temp` |
-| **Auf die LAP lernen.** | `/smax:lap-training` | Prüfungsrunde, Fortschritt in `log.md`/`progress.md` → Angebot, die Schwachstellen per `handoff` an `/smax:teach` zu übergeben |
+| **An idea, but no picture of it yet.** | `/smax:brainstorming` | exploration → `domain-modeling` → `writing-specs` |
+| **Plan/decision is set — does it hold?** | `/smax:sharpen-me` | relentless interview, question by question → offer to record it as a SPEC |
+| **Same, and the domain should grow along.** | `/smax:sharpen-with-docs` | as above, maintains `CONTEXT.md` and decisions on the side |
+| **Pin down a term or record a decision.** | `/smax:domain-modeling` | `CONTEXT.md`, `docs/decisions/NNNN-slug.md`, access pattern in the project `CLAUDE.md` |
+| **Spec is done, now build.** | `/smax:writing-plans` | plan → `using-git-worktrees` → SDD or `executing-plans` |
+| **Plan is done, work through it.** | `/smax:subagent-driven-development` | one subagent per task, controller checks every report, one whole-branch review at the end |
+| **Something is broken.** | `/smax:debugging` | cause before fix → `test-driven-development`, `verification-before-completion` |
+| **Done — how does it get in?** | `/smax:finishing-a-development-branch` | review gate, squash landing → `commitMessage` |
+| **Just the commit message.** | `/smax:commitMessage` | semantic message; with a body for squash branches |
+| **Write or change a skill.** | `/smax:writing-skills` | structure, testing with subagents |
+| **Understand something, not build it.** | `/smax:teach` | guided learning with mission, glossary, learning records |
+| **Handoff to the next session.** | `/smax:handoff` | self-contained document to `C:\Temp` |
+| **Reproduce machine changes.** | `/smax:replicate` | re-apply recipe to `C:\Temp` |
+| **Study for the LAP** (Austrian apprenticeship final exam). | `/smax:lap-training` | exam round, progress in `log.md`/`progress.md` → offer to hand the weak spots to `/smax:teach` via `handoff` |
 
-Das ist der Weg **in die Kette**. Die eigenständigen Commands stehen davor in [§2.1](#21-eigenständig-ohne-kette) — sie haben mit dem Workflow nichts zu tun.
+That is the way **into the chain**. The standalone commands come before it in [§2.1](#21-standalone-outside-the-chain) — they have nothing to do with the workflow.
 
 ---
 
-# 4 · Was ich nicht direkt aufrufe
+# 4 · What I do not call directly
 
-## Geht gar nicht per Modell
+## Not invocable by the model
 
-Alle **Commands** (`disable-model-invocation: true`) kann **nur ich** tippen — Claude kann sie nicht selbst starten, auch nicht aus einem anderen Skill heraus. Praktische Folge, die dreimal gebissen hat:
+All **commands** (`disable-model-invocation: true`) can be typed **only by me** — Claude cannot start them by itself, not even from inside another skill. A practical consequence that has bitten three times:
 
-- **`code-review`** ist ein Command. Ein Agent, der einen Plan abarbeitet, kann es nicht aufrufen. Deshalb schreibt `writing-plans` in jeden Plan zusätzlich den **aufgelösten Dateipfad** zur Reviewer-Vorlage (`docs/decisions/0017-reviewer-template-as-resolved-path.md`).
+- **`code-review`** is a command. An agent working through a plan cannot invoke it. That is why `writing-plans` additionally writes the **resolved file path** to the reviewer template into every plan (`docs/decisions/0017-reviewer-template-as-resolved-path.md`).
 
-  **Das heißt nicht, dass das Review ausfällt.** Blockiert ist nur der Skill-Wrapper, nicht die Vorlage `code-reviewer.md`: `finishing-a-development-branch` dispatcht sie **vor dem Squash automatisch**, `subagent-driven-development` am Branch-Ende ebenso — beide ohne Zutun. Der Pfad im Plan deckt allein den Restfall ab, in dem ein Plan abgearbeitet wird, ohne dass einer dieser beiden Skills Regie führt.
-- **`sharpen-with-docs`** ist ein Command. `writing-specs` ruft deshalb `sharpen` + `domain-modeling` einzeln auf, nicht den Wrapper.
-- **`handoff`** ist ein Command. `lap-training` bietet am Sessionende an, die Schwachstellen zu übergeben, kann den Skill aber nicht starten — es liest deshalb `../../dev/handoff/SKILL.md` und folgt ihm. `teach` liegt gleich: der Skill gibt den Aufruf aus, tippen musst du ihn.
+  **That does not mean the review is skipped.** Only the skill wrapper is blocked, not the template `code-reviewer.md`: `finishing-a-development-branch` dispatches it **automatically before the squash**, and `subagent-driven-development` does the same at the end of the branch — both without any action on your part. The path in the plan only covers the remaining case in which a plan is worked through without either of these two skills directing it.
+- **`sharpen-with-docs`** is a command. `writing-specs` therefore calls `sharpen` + `domain-modeling` individually, not the wrapper.
+- **`handoff`** is a command. At the end of a session `lap-training` offers to hand over the weak spots but cannot start the skill — so it reads `../../dev/handoff/SKILL.md` and follows it. `teach` is the same: the skill prints the invocation, you have to type it.
 
-## Geht, kostet aber ein Gate
+## Works, but skips a gate
 
-| Skill | was fehlt beim Direktaufruf |
+| Skill | What is missing when called directly |
 |---|---|
-| `writing-specs` | die Frage *„soll das überhaupt aufgeschrieben werden?"* — die kommt aus `brainstorming`/`sharpen-me`. Direkt sinnvoll nur, wenn die Denkarbeit schon gelaufen ist. |
-| `writing-plans` | ohne Spec gibt es keine Anforderungen für die `Global Constraints`. Das Glossar-Gate greift trotzdem. |
-| `finishing-a-development-branch` | ohne passenden SDD-Ledger feuert das Review-Gate und reviewt den ganzen Branch neu. Korrekt, aber teuer. |
+| `writing-specs` | the question *"should this be written down at all?"* — that comes from `brainstorming`/`sharpen-me`. Only useful directly when the thinking has already been done. |
+| `writing-plans` | without a spec there are no requirements for the `Global Constraints`. The glossary gate still applies. |
+| `finishing-a-development-branch` | without a matching SDD ledger, the review gate fires and reviews the whole branch again. Correct, but expensive. |
 
-## Läuft ohnehin von selbst
+## Runs on its own anyway
 
-Diese zieht die Kette von selbst — getippt werden **müssen** sie nie: `using-git-worktrees`, `domain-modeling`, `sync-solution-items`, `test-driven-development`, `verification-before-completion`.
+The chain pulls these in by itself — they never **have** to be typed: `using-git-worktrees`, `domain-modeling`, `sync-solution-items`, `test-driven-development`, `verification-before-completion`.
 
-**„Muss nicht" heißt nicht „bringt nichts".** `domain-modeling` ist der Fall, der beides ist: Die Kette ruft es als Querschnitt (§5), direkt getippt startet es eine eigene Modellierungs-Session — Begriffe festzurren, `CONTEXT.md` aufbauen, eine Decision festhalten. Für eine Decision, während gerade kein Entwurf läuft, ist der Direktaufruf sogar der einzige Weg.
+**"Doesn't have to" does not mean "is pointless".** `domain-modeling` is the case that is both: the chain calls it as a cross-cutting concern (§5); typed directly, it starts a modelling session of its own — pin down terms, build up `CONTEXT.md`, record a decision. For a decision while no draft is in progress, calling it directly is even the only way.
 
-## Verdrängt
+## Superseded
 
-`executing-plans` — `subagent-driven-development` ist in fast allen Fällen besser. Der Skill sagt das selbst in seiner ersten Notiz.
+`executing-plans` — `subagent-driven-development` is better in almost every case. The skill says so itself in its first note.
 
 ---
 
-# 5 · Alle Skills
+# 5 · All skills
 
-Aufruf mit Präfix: `/smax:<name>`. Der Name kommt aus dem `name:`-Frontmatter — der Gruppen-Unterordner ist rein organisatorisch.
+Invocation with prefix: `/smax:<name>`. The name comes from the `name:` frontmatter — the group subfolder is purely organisational.
 
-**Trigger:** *Command* = nur von mir getippt · *Skill* = Claude kann ihn auch selbst auslösen. Der Unterschied ist in [§2](#2--die-commands) erklärt.
+**Trigger:** *Command* = typed only by me · *Skill* = Claude can also trigger it by itself. The difference is explained in [§2](#2--the-commands).
 
-### dev — Workflow-Kette
+### dev — workflow chain
 
-Größtenteils aus **superpowers** abgeleitet und umgebaut. Welche Datei woher stammt und wie weit sie divergiert ist, steht je Datei in [plugin/NOTICE.md](./plugin/NOTICE.md).
+Mostly derived from **superpowers** and reworked. Which file comes from where and how far it has diverged is in [plugin/NOTICE.md](./plugin/NOTICE.md), per file.
 
-| Skill | Argumente | Trigger |
+| Skill | Arguments | Trigger |
 |---|---|---|
 | brainstorming | — | Command |
 | writing-specs | — | Skill |
@@ -258,93 +257,93 @@ Größtenteils aus **superpowers** abgeleitet und umgebaut. Welche Datei woher s
 | dispatching-parallel-agents | — | Skill |
 | writing-skills | — | Skill |
 
-### dev — Denken & Doku
+### dev — thinking & docs
 
-`sharpen`, `sharpen-me`, `sharpen-with-docs`, `domain-modeling` und `teach` stammen von **mattpocock/skills**, der Rest ist eigen. Auch hier gilt: Herkunft und Umbautiefe je Datei in [plugin/NOTICE.md](./plugin/NOTICE.md).
+`sharpen`, `sharpen-me`, `sharpen-with-docs`, `domain-modeling` and `teach` come from **mattpocock/skills**, the rest is my own. Here too: origin and depth of rework per file in [plugin/NOTICE.md](./plugin/NOTICE.md).
 
-| Skill | Argumente | Trigger |
+| Skill | Arguments | Trigger |
 |---|---|---|
 | sharpen | `[plan/decision/idea]` | Skill |
 | sharpen-me | `[plan or decision]` | Command |
 | sharpen-with-docs | `[plan or decision]` | Command |
 | domain-modeling | — | Skill |
 | sync-solution-items | — | Skill |
-| teach | `[Thema]` | Command |
+| teach | `[topic]` | Command |
 | handoff | `[focus next session]` | Command |
 | replicate | `[focus of changes]` | Command |
 | infographic-page | `<topic> [focus]` | Command |
 | data-model-diagram | `<model source (spec, DDL, schema)> [target path]` | Command |
 | md-to-pdf | `<file.md> [more.md ...]` | Skill |
 
-### dev — Kunden- & Web-Aufgaben
+### dev — client & web tasks
 
-| Skill | Argumente | Trigger |
+| Skill | Arguments | Trigger |
 |---|---|---|
-| mail-draft | `[Empfänger / Thema]` | Skill |
+| mail-draft | `[recipient / topic]` | Skill |
 | proad-job-report | `[commit ref, default HEAD]` | Command |
 
 ### personal
 
-| Skill | Argumente | Trigger |
+| Skill | Arguments | Trigger |
 |---|---|---|
 | find-beer-deals | `<beer> [ZIP/town]` | Command |
 | whats-for-lunch | — | Command |
 | nano-vs-colors | — | Command |
-| lap-training | `[Minuten] \| simulation \| status` | Command |
+| lap-training | `[minutes] \| simulation \| status` | Command |
 
-### repo-lokal — nur in diesem Repo
+### repo-local — this repo only
 
-Liegt unter `.claude/skills/`, wird **nicht** ausgeliefert und ist nur hier
-verfügbar. Aufruf ohne Präfix.
+Lives under `.claude/skills/`, is **not** shipped and is only
+available here. Invoked without a prefix.
 
-| Skill | Argumente | Trigger |
+| Skill | Arguments | Trigger |
 |---|---|---|
 | sync-plugin-docs | — | Skill |
 
-Warum nicht im Plugin: `docs/decisions/0018-sync-plugin-docs-stays-repo-local.md`.
+Why not in the plugin: `docs/decisions/0018-sync-plugin-docs-stays-repo-local.md`.
 
-### Wer ruft wen
+### Who calls whom
 
-| Skill | ruft |
+| Skill | Calls |
 |---|---|
 | `brainstorming` | `domain-modeling`, `writing-specs` |
 | `writing-specs` | `domain-modeling`, `sync-solution-items`, `sharpen`, `writing-plans` |
-| `writing-plans` | `domain-modeling`, `sync-solution-items`, `code-review` (als Pfad), `commitMessage`, `subagent-driven-development`, `executing-plans` |
+| `writing-plans` | `domain-modeling`, `sync-solution-items`, `code-review` (as path), `commitMessage`, `subagent-driven-development`, `executing-plans` |
 | `executing-plans` | `using-git-worktrees`, `subagent-driven-development`, `finishing-a-development-branch` |
-| `subagent-driven-development` | `using-git-worktrees`, `code-review` (als Pfad), `finishing-a-development-branch` |
-| `finishing-a-development-branch` | `code-review` (als Pfad), `commitMessage` |
+| `subagent-driven-development` | `using-git-worktrees`, `code-review` (as path), `finishing-a-development-branch` |
+| `finishing-a-development-branch` | `code-review` (as path), `commitMessage` |
 | `debugging` | `test-driven-development`, `verification-before-completion`, `domain-modeling` |
 | `writing-skills` | `test-driven-development` |
 | `sharpen-me` | `sharpen`, `writing-specs` |
 | `sharpen-with-docs` | `sharpen`, `domain-modeling`, `writing-specs` |
 | `domain-modeling` | `sync-solution-items` |
-| `lap-training` | `handoff` (als Pfad) |
+| `lap-training` | `handoff` (as path) |
 
-`domain-modeling` ist der Querschnitts-Satellit — gerufen von `brainstorming`, `writing-specs`, `writing-plans`, `debugging`, `sharpen-with-docs`. Mehr eingehende Aufrufe als jeder andere Skill.
+`domain-modeling` is the cross-cutting satellite — called by `brainstorming`, `writing-specs`, `writing-plans`, `debugging`, `sharpen-with-docs`. More incoming calls than any other skill.
 
-`sync-solution-items` ist der zweite Satellit und greift **nur** bei einer `.slnx` im Repo-Root. Die Aufrufer prüfen das vorher und überspringen ihn sonst wortlos. In Nicht-.NET-Projekten existiert der Schritt schlicht nicht.
+`sync-solution-items` is the second satellite and applies **only** when there is a `.slnx` in the repo root. The callers check this beforehand and skip it without a word otherwise. In non-.NET projects the step simply does not exist.
 
 ---
 
 # 6 · Development
 
-Ziel: **im Repo editieren, committen, Claude neu starten, fertig.** Kein Push, kein `/plugin marketplace update`, kein Symlink.
+Goal: **edit in the repo, commit, restart Claude, done.** No push, no `/plugin marketplace update`, no symlink.
 
-## 6.1 Marketplace-Mechanik in vier Sätzen
+## 6.1 Marketplace mechanics in four sentences
 
-Ein *Marketplace* ist ein Katalog (`.claude-plugin/marketplace.json`) und sagt, welche Plugins es gibt und wo sie liegen. Ein *Plugin* hat sein eigenes Manifest (`plugin/.claude-plugin/plugin.json`) und listet seine Skill-Verzeichnisse. **Marketplace-Quelle und Plugin-Quelle sind zwei verschiedene Dinge**: die Marketplace-Quelle sagt, woher der Katalog kommt (GitHub, Git-URL, lokales Verzeichnis), die Plugin-Quelle steht *im* Katalog und ist hier ein relativer Pfad (`./plugin`) — also dasselbe Repo. Registriert wird der Marketplace entweder per `/plugin marketplace add` oder deklarativ über `extraKnownMarketplaces` in den Settings.
+A *marketplace* is a catalogue (`.claude-plugin/marketplace.json`) and says which plugins exist and where they live. A *plugin* has its own manifest (`plugin/.claude-plugin/plugin.json`) and lists its skill directories. **Marketplace source and plugin source are two different things**: the marketplace source says where the catalogue comes from (GitHub, Git URL, local directory), the plugin source stands *in* the catalogue and here is a relative path (`./plugin`) — so the same repo. The marketplace is registered either via `/plugin marketplace add` or declaratively through `extraKnownMarketplaces` in the settings.
 
-**Bei einer `directory`-Quelle wird das Plugin an Ort und Stelle gelesen** — es landet keine Kopie unter `~/.claude/plugins/cache/`, und der Skill-Header zeigt direkt ins Repo. Die offizielle Doku sagt pauschal, Plugins würden beim Installieren in den Cache kopiert; für lokale Quellen stimmt das nicht (am 31.07.2026 nachgeprüft). Genau darauf beruht der ganze Dev-Loop.
+**With a `directory` source the plugin is read in place** — no copy lands under `~/.claude/plugins/cache/`, and the skill header points straight into the repo. The official docs say across the board that plugins are copied into the cache on install; for local sources that is not true (verified on 2026-07-31). The whole dev loop rests on exactly this.
 
-## 6.2 Setup der Dev-Maschine
+## 6.2 Setting up the dev machine
 
-**Repo klonen:**
+**Clone the repo:**
 
 ```bash
 git clone https://github.com/Smax1988/smax-skills.git C:/Projects/smax-skills
 ```
 
-**Als lokale Marketplace-Quelle eintragen** in `~/.claude/settings.json` — maschinenspezifischer Pfad, gehört deshalb **nicht** ins Repo:
+**Register it as a local marketplace source** in `~/.claude/settings.json` — a machine-specific path, which is why it does **not** belong in the repo:
 
 ```json
 {
@@ -359,49 +358,49 @@ git clone https://github.com/Smax1988/smax-skills.git C:/Projects/smax-skills
 }
 ```
 
-Kein `/plugin install` nötig — `enabledPlugins` genügt, Claude Code zieht den Marketplace beim Start.
+No `/plugin install` needed — `enabledPlugins` is enough, Claude Code pulls in the marketplace at startup.
 
-Kein `autoUpdate` — es gibt keinen Upstream zu ziehen. Aktualisiert wird mit `git pull` im Repo. Aus demselben Grund ist `/plugin marketplace update smax-skills` hier wirkungslos.
+No `autoUpdate` — there is no upstream to pull. Updates happen with `git pull` in the repo. For the same reason `/plugin marketplace update smax-skills` has no effect here.
 
-> War die Maschine vorher auf der GitHub-Quelle, reicht das Ändern der Settings **nicht**: Claude Code merkt sich die Registrierung in `~/.claude/plugins/known_marketplaces.json` und den Installationsstand in `installed_plugins.json`. Beide Einträge für `smax-skills` bzw. `smax@smax-skills` entfernen, dann neu starten — sie werden aus den Settings neu angelegt. Sonst läuft weiter die alte Cache-Kopie.
+> If the machine was on the GitHub source before, changing the settings is **not** enough: Claude Code remembers the registration in `~/.claude/plugins/known_marketplaces.json` and the install state in `installed_plugins.json`. Remove both entries for `smax-skills` and `smax@smax-skills` respectively, then restart — they are recreated from the settings. Otherwise the old cache copy keeps running.
 
-## 6.3 Der Loop
+## 6.3 The loop
 
-1. `SKILL.md` unter `C:\Projects\smax-skills\plugin\skills\…` editieren.
-2. Committen.
-3. Claude neu starten.
-4. `/smax:<skill>` aufrufen.
+1. Edit `SKILL.md` under `C:\Projects\smax-skills\plugin\skills\…`.
+2. Commit.
+3. Restart Claude.
+4. Invoke `/smax:<skill>`.
 
-**Warum Neustart und nicht `/reload-plugins`:** Claude Code friert Skill-Inhalte **beim Session-Start** ein, nicht beim Aufruf. Eine laufende Session sieht spätere Änderungen an einer `SKILL.md` nicht, egal wann der Skill aufgerufen wird. Wer das vergisst, hält einen frisch gebauten Fix für wirkungslos, weil er nie geladen wurde.
+**Why restart and not `/reload-plugins`:** Claude Code freezes skill contents **at session start**, not at invocation. A running session does not see later changes to a `SKILL.md`, no matter when the skill is invoked. Forget this and you will take a freshly built fix for ineffective, because it was never loaded.
 
-**Immer die Quelle bearbeiten** — nie eine Kopie unter `~/.claude/plugins/cache/`.
+**Always edit the source** — never a copy under `~/.claude/plugins/cache/`.
 
-**Warum committen, obwohl der Working Tree gelesen wird:** Technisch nötig ist es nicht — bei der lokalen Quelle ist ein Edit auch uncommittet nach dem Neustart wirksam. Der Commit ist Disziplin: Er stellt sicher, dass die Fassung, die du testest, auch die ist, die auf den anderen Maschinen ankommt, und er ist der Rückweg, wenn ein Skill sich nach der Änderung seltsam verhält.
+**Why commit even though the working tree is read:** technically it is not necessary — with the local source an edit takes effect after the restart even uncommitted. The commit is discipline: it ensures that the version you test is also the one that arrives on the other machines, and it is the way back if a skill behaves oddly after the change.
 
-## 6.4 Welche Fassung läuft gerade?
+## 6.4 Which version is running right now?
 
-Die Frage, sobald eine Änderung „nicht wirkt".
+The question as soon as a change "doesn't work".
 
-**Der eine Beweis:** irgendeinen Skill aufrufen und die erste Zeile des injizierten Textes lesen.
+**The one proof:** invoke any skill and read the first line of the injected text.
 
 ```
 Base directory for this skill: C:\Projects\smax-skills\plugin\skills\dev\<skill>
 ```
 
-Zeigt sie ins Repo, läuft die lokale Quelle. Zeigt sie nach `~/.claude/plugins/cache/…`, läuft eine Cache-Kopie — dann stimmt das Setup nicht, siehe den Kasten in 6.2. Das ist der einzige Check, der beweist statt vermutet, und er funktioniert in beiden Betriebsarten.
+If it points into the repo, the local source is running. If it points to `~/.claude/plugins/cache/…`, a cache copy is running — then the setup is wrong, see the box in 6.2. This is the only check that proves rather than guesses, and it works in both modes of operation.
 
-Fällt er unerwartet aus, diese zwei zur Eingrenzung:
+If it comes out unexpectedly, these two narrow it down:
 
 ```bash
-cat ~/.claude/plugins/known_marketplaces.json       # welche Quelle ist registriert?
-ls -d ~/.claude/plugins/cache/smax-skills/smax/*/   # liegen noch Cache-Kopien herum?
+cat ~/.claude/plugins/known_marketplaces.json       # which source is registered?
+ls -d ~/.claude/plugins/cache/smax-skills/smax/*/   # are cache copies still lying around?
 ```
 
-> **Cache-Zeitstempel beweisen nichts.** Am 31.07.2026 trug eine Cache-Kopie einen taufrischen Zeitstempel und enthielt trotzdem die Fassung von vorgestern — das hat die Diagnose eine Runde gekostet. Bei einer `directory`-Quelle sollte dort ohnehin nichts liegen; was noch da ist, ist Altlast und kann weg.
+> **Cache timestamps prove nothing.** On 2026-07-31 a cache copy carried a brand-new timestamp and still contained the version from two days earlier — that cost the diagnosis a round. With a `directory` source nothing should be there anyway; whatever is still there is leftover and can go.
 
-## 6.5 Eine Maschine wieder auf Nicht-Dev stellen
+## 6.5 Switching a machine back to non-dev
 
-Für Rechner, die das Plugin nur benutzen sollen:
+For computers that should only use the plugin:
 
 ```json
 {
@@ -414,116 +413,116 @@ Für Rechner, die das Plugin nur benutzen sollen:
 }
 ```
 
-Danach den `smax-skills`-Eintrag aus `known_marketplaces.json` und `smax@smax-skills` aus `installed_plugins.json` entfernen und neu starten — sonst bleibt die lokale Registrierung stehen.
+Then remove the `smax-skills` entry from `known_marketplaces.json` and `smax@smax-skills` from `installed_plugins.json`, and restart — otherwise the local registration stays in place.
 
-Mit `autoUpdate` holt Claude Code neue Commits nach Session-Start automatisch (Verzögerung bis ~10 Min); die **aktive** Session lädt sie erst nach `/reload-plugins`. Ohne `autoUpdate` manuell:
+With `autoUpdate`, Claude Code fetches new commits automatically after session start (delay up to ~10 min); the **active** session only loads them after `/reload-plugins`. Without `autoUpdate`, manually:
 
 ```
 /plugin marketplace update smax-skills
 /reload-plugins
 ```
 
-**Versionierung:** `version` ist in `plugin.json` bewusst weggelassen → jeder Commit gilt als neue Version. Ein `version`-Feld nur setzen, wenn ich kontrollierte Releases will.
+**Versioning:** `version` is deliberately omitted from `plugin.json` → every commit counts as a new version. Only set a `version` field if I want controlled releases.
 
-**An-/Abschalten ohne Deinstallation:**
+**Enable/disable without uninstalling:**
 
 ```
 /plugin disable smax@smax-skills
 /plugin enable  smax@smax-skills
 ```
 
-> Alten Klon unter `~/.claude/skills` entfernen — sonst sind die Skills doppelt (`/handoff` **und** `/smax:handoff`). Dasselbe gilt für gleichnamige Slash-Commands unter `~/.claude/commands/`: die schatten den Plugin-Skill.
+> Remove an old clone under `~/.claude/skills` — otherwise the skills are there twice (`/handoff` **and** `/smax:handoff`). The same applies to slash commands of the same name under `~/.claude/commands/`: they shadow the plugin skill.
 
-## 6.6 Ohne jede Installation testen
+## 6.6 Testing without any installation
 
-Gilt nur für die eine Session:
+Applies to that one session only:
 
 ```
 claude --plugin-dir C:/Projects/smax-skills
 ```
 
-## 6.7 Neuen Skill hinzufügen
+## 6.7 Adding a new skill
 
-1. `plugin/skills/dev/<name>/SKILL.md` anlegen (oder `personal/`).
+1. Create `plugin/skills/dev/<name>/SKILL.md` (or `personal/`).
 2. Frontmatter:
    ```yaml
    ---
-   name: <name>                         # = Aufrufname, kebab-case
-   description: <wann/wofür>            # nur Auslöser, nie den Ablauf zusammenfassen
-   argument-hint: [optional]            # nur wenn der Skill Parameter nimmt
-   allowed-tools: Tool, mcp__server__*  # nur wenn beschränkt werden soll
-   disable-model-invocation: true       # macht den Skill zum Command
+   name: <name>                         # = invocation name, kebab-case
+   description: <when/what for>         # triggers only, never summarise the flow
+   argument-hint: [optional]            # only if the skill takes parameters
+   allowed-tools: Tool, mcp__server__*  # only if it should be restricted
+   disable-model-invocation: true       # makes the skill a command
    ---
    ```
-3. Committen, neu starten.
+3. Commit, restart.
 
-`allowed-tools` ist bei Skills eine **harte Beschränkung**, keine Auto-Approve-Liste — wer schreibt, braucht `Write` in der Liste.
+For skills, `allowed-tools` is a **hard restriction**, not an auto-approve list — a skill that writes needs `Write` in the list.
 
-Die `description` **nie** den Ablauf zusammenfassen lassen: Agenten folgen dann der Beschreibung statt dem Skill-Text. Nur Auslösebedingungen. Details in `writing-skills`.
+**Never** let the `description` summarise the flow: agents then follow the description instead of the skill text. Trigger conditions only. Details in `writing-skills`.
 
-**Repo-lokal statt Plugin.** Ein Skill, der nur in *diesem* Repo Sinn ergibt,
-kommt nach `.claude/skills/<name>/SKILL.md`. Kein Eintrag im Plugin-Manifest,
-kein Marketplace, nach einem Neustart da. Er steht **nicht** in
-`plugin/NOTICE.md` — das führt ausgelieferte Dateien und ihre Upstream-Herkunft,
-und beides trifft hier nicht zu. Aufruf ohne `smax:`-Präfix.
+**Repo-local instead of plugin.** A skill that only makes sense in *this* repo
+goes to `.claude/skills/<name>/SKILL.md`. No entry in the plugin manifest,
+no marketplace, there after a restart. It does **not** appear in
+`plugin/NOTICE.md` — that lists shipped files and their upstream origin,
+and neither applies here. Invoked without the `smax:` prefix.
 
-Die Kehrseite: **Kein Plugin-Skill darf ihn referenzieren.** Der Pfad existiert
-in keinem anderen Repo, und der Verweis liefe dort still ins Leere.
+The flip side: **no plugin skill may reference it.** The path exists
+in no other repo, and the reference would silently lead nowhere there.
 
-## 6.8 Neue Gruppe hinzufügen
+## 6.8 Adding a new group
 
-1. Ordner `plugin/skills/<gruppe>/` anlegen.
-2. Pfad in `plugin/.claude-plugin/plugin.json` ergänzen, sonst wird die Gruppe nicht gefunden:
+1. Create the folder `plugin/skills/<group>/`.
+2. Add the path to `plugin/.claude-plugin/plugin.json`, otherwise the group is not found:
    ```json
-   { "skills": ["./skills/dev", "./skills/personal", "./skills/<gruppe>"] }
+   { "skills": ["./skills/dev", "./skills/personal", "./skills/<group>"] }
    ```
-   Pfade sind relativ zum **Plugin**-Root (`plugin/`), nicht zum Repo-Root. Der Aufrufname ändert sich dadurch nicht.
+   Paths are relative to the **plugin** root (`plugin/`), not the repo root. The invocation name does not change.
 
 ---
 
-# 7 · Hintergrund
+# 7 · Background
 
-## Struktur
+## Structure
 
 ```
 .claude-plugin/
-└── marketplace.json           # Marketplace (name: smax-skills)
+└── marketplace.json           # marketplace (name: smax-skills)
 plugin/
 ├── .claude-plugin/
-│   └── plugin.json            # Plugin-Manifest (name: smax)
-├── NOTICE.md                  # Herkunft der abgeleiteten Dateien, je Upstream ein Abschnitt
+│   └── plugin.json            # plugin manifest (name: smax)
+├── NOTICE.md                  # origin of the derived files, one section per upstream
 └── skills/
     ├── dev/<skill>/SKILL.md
     └── personal/<skill>/SKILL.md
-docs/                          # wird nicht ausgeliefert
+docs/                          # not shipped
 ├── 00_Analysis/ 01_Specs/ 02_Plans/ 03_DbChanges/
-└── decisions/                 # NNNN-slug.md — warum dieses Repo abweicht
-CLAUDE.md                      # Projektanweisungen, immer im Kontext
-TODOS.md                       # offene Arbeit, nummeriert und gruppiert
+└── decisions/                 # NNNN-slug.md — why this repo deviates
+CLAUDE.md                      # project instructions, always in context
+TODOS.md                       # open work, numbered and grouped
 ```
 
 ## Decisions
 
-Siehe [1.5](#15-decisions--der-stabile-kern) — sie gehören zum Arbeitsablauf, nicht in den Anhang.
+See [1.5](#15-decisions--the-stable-core) — they belong to the workflow, not to the appendix.
 
-## Herkunft
+## Origin
 
-**Zwei Upstreams, beide MIT.**
+**Two upstreams, both MIT.**
 
-Der Workflow-Teil ist von **superpowers** (Jesse Vincent) abgeleitet und umgebaut: Referenzen auf `smax:`, Arbeitsverzeichnisse auf `.smax/`, Dokumentpfade auf die `docs/`-Konvention dieses Repos, dazu inhaltliche Änderungen.
+The workflow part is derived from **superpowers** (Jesse Vincent) and reworked: references to `smax:`, working directories to `.smax/`, document paths to this repo's `docs/` convention, plus changes in substance.
 
-Fünf Skills stammen von **mattpocock/skills** (Matt Pocock): `sharpen`, `sharpen-me`, `sharpen-with-docs`, `domain-modeling` und `teach`. Die drei `sharpen*` hießen upstream `grill*` — die Umbenennung hat die Herkunft am Dateinamen getilgt und den zweiten Upstream vom ersten Tag des NOTICE bis zum 04.08.2026 daraus herausgehalten.
+Five skills come from **mattpocock/skills** (Matt Pocock): `sharpen`, `sharpen-me`, `sharpen-with-docs`, `domain-modeling` and `teach`. The three `sharpen*` were called `grill*` upstream — the rename erased the origin from the file name and kept the second upstream out of the NOTICE from its first day until 2026-08-04.
 
-Alles andere ist eigen. Upstream-Stand, Dateiliste, Einstufung und Lizenztext je Upstream in [plugin/NOTICE.md](./plugin/NOTICE.md) — das *Warum* in `docs/decisions/`.
+Everything else is my own. Upstream state, file list, classification and licence text per upstream in [plugin/NOTICE.md](./plugin/NOTICE.md) — the *why* in `docs/decisions/`.
 
-## Mehrere Maschinen / zwei git-Konten
+## Multiple machines / two git accounts
 
-Öffentliches GitHub-Repo, getrennt vom betrieblichen Azure DevOps (dort liegt `cnx-skills`), Credentials pro Host getrennt (GCM-Konto-Popup beim Zugriff). Lesen braucht kein Konto. Pushen darf das private GitHub-Konto und, vom Firmengerät aus, das Firmen-GitHub-Konto als Collaborator. Kein `smax`-Skill ruft einen `cnx`-Skill.
+Public GitHub repo, separate from the company Azure DevOps (where `cnx-skills` lives), credentials separated per host (GCM account popup on access). Reading needs no account. Pushing is allowed for the private GitHub account and, from the company device, the company GitHub account as a collaborator. No `smax` skill calls a `cnx` skill.
 
-## Zeilenenden
+## Line endings
 
-`.gitattributes` erzwingt LF überall — kein CRLF/LF-Churn cross-machine.
+`.gitattributes` enforces LF everywhere — no CRLF/LF churn across machines.
 
 ---
 
-*Änderst du Marketplace- oder Plugin-Namen, hier und in beiden Manifesten mitziehen (`.claude-plugin/marketplace.json`, `plugin/.claude-plugin/plugin.json`).*
+*If you change the marketplace or plugin name, update it here and in both manifests (`.claude-plugin/marketplace.json`, `plugin/.claude-plugin/plugin.json`).*

@@ -9,7 +9,7 @@ those two poles, and neither the glossary nor
 - `**REQUIRED SUB-SKILL:** Use smax:<name>`
 - `**REQUIRED BACKGROUND:** You MUST understand smax:<name>`
 
-**Both count.** They put four rows into README §5 *Wer ruft wen* —
+**Both count.** They put four rows into README §5 *Who calls whom* —
 `writing-plans` → `subagent-driven-development`, `writing-plans` →
 `executing-plans`, `executing-plans` → `finishing-a-development-branch`, and
 `writing-skills` → `test-driven-development` — and those rows ship. Without
@@ -31,9 +31,9 @@ or none.
 
 ## Why `REQUIRED BACKGROUND:` counts
 
-README §4 *Läuft ohnehin von selbst* already lists `test-driven-development` as
+README §4 *Runs on its own anyway* already lists `test-driven-development` as
 something the chain pulls in on the user's behalf. To carry it there as wired in
-and leave it out of *Wer ruft wen* is the same contradiction stated twice in one
+and leave it out of *Who calls whom* is the same contradiction stated twice in one
 document.
 
 The wording carries it too: *You MUST understand `smax:<name>` before using this
@@ -78,7 +78,7 @@ a whole skill directory rather than its `SKILL.md`.
 
 ## Consequence for `sync-plugin-docs`
 
-*Wer ruft wen* has calls as its source, so the skill writes that table silently
+*Who calls whom* has calls as its source, so the skill writes that table silently
 ([[0019-write-sourced-present-the-rest]]). Which text counts as a call therefore
 decides what gets written without asking — and a rule that lives only in a
 session transcript cannot decide anything. That is the reason this is a Decision

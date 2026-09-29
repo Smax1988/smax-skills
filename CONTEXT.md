@@ -24,7 +24,7 @@ _Avoid_: Kante, Aufrufkante, Edge, Referenz
 
 **Eigenständiger Command** (`StandaloneCommand`):
 Ein Command, der keinen Skill ruft und von keinem gerufen wird. README §2.1
-führt genau diese und heißt deshalb „Eigenständig, ohne Kette".
+führt genau diese und heißt deshalb „Standalone, outside the chain".
 _Avoid_: kantenloser Command, freistehender Command, isolierter Command
 
 **Ketten-Command** (`ChainCommand`):
@@ -78,11 +78,11 @@ mitliefert: dann *Zu übernehmen*, sonst *Gemeldet*.
 _Avoid_: Mapping, Zuordnung, Regel
 
 **Bucket** (`Bucket`):
-Ein Klassifizierungsabschnitt in `plugin/NOTICE.md` — *Unverändert übernommen*,
-*Übernommen, punktuell ergänzt*, *Substanziell umgebaut*, *Eingefrorene Kopie
-externer Dokumentation*, *Ohne Upstream-Herkunft*, *Nicht übernommen*. Die
-ersten vier ordnen **Dateien** ein, *Ohne Upstream-Herkunft* ordnet **Skills**
-ein, *Nicht übernommen* ist gemischt — dort stehen Skills, ganze Verzeichnisse
+Ein Klassifizierungsabschnitt in `plugin/NOTICE.md` — *Taken over unchanged*,
+*Taken over, selectively extended*, *Substantially rebuilt*, *Frozen copy of
+external documentation*, *No upstream origin*, *Not taken over*. Die ersten
+vier ordnen **Dateien** ein, *No upstream origin* ordnet **Skills** ein, *Not
+taken over* ist gemischt — dort stehen Skills, ganze Verzeichnisse
 und Dateien nebeneinander.
 _Avoid_: Eimer, Kategorie, Stufe, Klasse
 

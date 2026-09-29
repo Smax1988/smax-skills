@@ -15,9 +15,9 @@ the upstream commits in the header tables of NOTICE §1 and §2.
   in a bucket changed, and the diff against the comparison base shows that. This
   replaces the sentence in [[0019-write-sourced-present-the-rest]] that says
   leaving a bucket is evidenced by the diff against the import commit.
-- **The list *Älter als der Import* in NOTICE §3 is closed.** No skill becomes
+- **The list *Older than the import* in NOTICE §3 is closed.** No skill becomes
   older than the import after the fact, so a new skill of our own always goes
-  under *Danach entstanden*. That rule is the source for the write verdict; the
+  under *Created afterwards*. That rule is the source for the write verdict; the
   `git ls-tree` against the parent of the import commit is no longer needed.
 
 **Considered and rejected:**
