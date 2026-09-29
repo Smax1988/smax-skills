@@ -78,7 +78,8 @@ PowerShell route does not exist off Windows.
 Run `winget --version` as described in "Running a command". If it fails, carry
 on with step 3 and the report, but **install nothing**: the report ends with the
 line `winget fehlt - "App Installer" aus dem Microsoft Store installieren, dann
-/smax:setup erneut.` and no confirmation list.
+/smax:setup erneut.` and no confirmation list. That line is printed only if
+something is missing.
 
 ## 3 - Check
 
@@ -93,8 +94,8 @@ Every row of `requirements.md`, **in row order**. One script per row, the row's
 
 A row is **Pflicht** if its *Mandatory for* column names a skill, **or** a
 Pflicht row names it under *Needs*. Otherwise it is **optional**. So Node.js
-stays Pflicht while Playwright MCP is Pflicht, even if no skill calls `npx`
-directly.
+would stay Pflicht as long as Playwright MCP is Pflicht, even if no skill
+called `npx` directly.
 
 All rows, in row order:
 
@@ -110,10 +111,10 @@ Setup - 7 Anforderungen geprüft
 *Braucht es* is filled only for missing rows: *Mandatory for* and *Optional for*
 together.
 
-**Nothing missing:** the report's first line is `Alles vorhanden.`, the table
-follows, and the run ends. No question, no installation. A second run after
-every installation was accepted ends here - that is what makes the skill safe to
-run again.
+**Nothing missing:** the header line stays, `Alles vorhanden.` follows right
+after it, then the table, and the run ends. No question, no installation. A
+second run after every installation was accepted ends here - that is what makes
+the skill safe to run again.
 
 ## 5 - Confirm
 
@@ -150,7 +151,7 @@ refresh reports every successful install as a failure:
 
 ```powershell
 $ErrorActionPreference = 'Stop'
-<the row's Install; for winget append --accept-source-agreements --accept-package-agreements --disable-interactivity>
+<the row's Install; for winget append --accept-source-agreements --accept-package-agreements --disable-interactivity --no-upgrade>
 $installRc = $LASTEXITCODE
 Write-Output ("install=" + $installRc)
 $env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')
@@ -169,8 +170,12 @@ code would otherwise be lost.
 Judge the result by the **check**, not by the installer's exit code:
 
 - check passes -> **installiert**
-- check fails, winget said the package is already installed -> **installiert,
-  aber nicht im PATH**. Do not retry.
+- check fails, winget said the package is already installed (`--no-upgrade`
+  makes it report that instead of upgrading) -> **installiert, aber nicht im
+  PATH**. Do not retry.
+- row of Kind `mcp`: install exited 0 but the check fails (the first `npx -y`
+  download can exceed the health-check timeout) -> **registriert, Verbindung
+  nach Neustart prüfen**. Do not retry.
 - check fails otherwise -> **fehlgeschlagen**, with `install=<code>` and the last
   line of the installer output.
 
@@ -193,5 +198,7 @@ einen neu registrierten MCP-Server.
 ```
 
 Leave out empty sections. The restart line appears only if anything was
-installed. A row the user declined stays under *Weiterhin fehlend* with
-`abgelehnt`; the next run offers it again - this skill keeps no state.
+installed or registered (**registriert, Verbindung nach Neustart prüfen** is
+listed under *Installiert* with that note). A row the user declined stays under
+*Weiterhin fehlend* with `abgelehnt`; the next run offers it again - this skill
+keeps no state.

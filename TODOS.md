@@ -180,6 +180,17 @@ Offen ist nur noch die Umsetzung: Plan schreiben, Skill bauen,
 `sync-plugin-docs` erweitern. Fertig, wenn die Abnahmefälle der Spec (§8)
 durchlaufen: Ein Lauf auf einer frischen Maschine hinterlässt jeden Skill
 lauffähig, und ein zweiter Lauf meldet „Alles vorhanden."
+- [ ] **2.4.5** Ungeprüft: Legt das winget-Paket `Python.Python.3.14` `python`
+      im PATH vor den WindowsApps-Store-Alias? Nur eine echte Installation
+      entscheidet das. Fertig, wenn ein Abnahmelauf auf einer frischen Maschine
+      `python --version` mit `Python 3.` zeigt.
+- [ ] **2.4.6** `setup` §2: Fehlt winget, sperrt das auch die Zeile Playwright
+      MCP, obwohl `claude mcp add` kein winget braucht — strenger als nötig.
+      Entscheiden, ob gelockert wird (Option: Sperre nur für Zeilen mit
+      Kind `program`). Fertig, wenn §2 die Entscheidung festhält.
+- [ ] **2.4.7** `docs/decisions/0027-requirement-list-central-guarded-by-sync.md`
+      nutzt `_Avoid_`-Begriffe („a real dependency", „Its own prerequisites").
+      Fertig, wenn der Text stattdessen *requirement* sagt.
 
 ---
 

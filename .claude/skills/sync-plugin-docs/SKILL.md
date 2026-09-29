@@ -84,8 +84,9 @@ precedes the base line — no lead-in sentence summarising what you checked.
 **Emit that report anyway.** Silence reads as „it did not run", and that
 uncertainty is what this skill exists to remove.
 
-Something changed? Then **two** questions are open, not one, and they have
-different triggers. The two steps below answer them, in this order. Run both.
+Something changed? Then **three** questions are open, not one, and they have
+different triggers. The three steps below answer them, in this order. Run all
+three.
 
 ### NOTICE first — the trigger is *which file* changed
 
@@ -191,7 +192,7 @@ every row.
 Per affected skill other than `setup`:
 
 ```bash
-git diff <base> -- plugin/skills/<group>/<name>/ | grep '^[+-]' | grep -v '^+++\|^---'
+git diff <base> -- plugin/skills/<group>/<name>/ | grep '^[+-]' | grep -v '^+++ \|^--- '
 ```
 
 Untracked files of a new skill have no diff; read them whole and treat every
@@ -204,7 +205,7 @@ substring, case-sensitive, spaces included:
 |---|---|---|
 | a hit in an **added** line, and the skill is in neither *Mandatory for* nor *Optional for* of that row | **ask** | *Gemeldet* — name row, skill, file and line, and that *Mandatory for* or *Optional for* is the author's choice. No draft: two candidates and no rule |
 | a hit in a **removed** line, the skill is in that row, and `grep -rnF` finds **no** string of the row's *Signature* left anywhere in the skill's directory | **ask** | *Zu übernehmen* — `alt:` the cell with the skill, `neu:` the cell without it |
-| the skill's directory is **deleted** | **write** | *Geschrieben* — remove the name from every cell of the list |
+| the skill's directory is **deleted** | **write** | *Geschrieben* — remove the name from every cell of the list; a cell left empty becomes `-` |
 | the skill is **renamed** (`name:`) | **write** | *Geschrieben* — replace the name in every cell |
 | `allowed-tools:` names an `mcp__<server>__` prefix that no row's *Signature* carries | **report** | *Gemeldet* |
 | after your writes a row names no skill in either column | **report** | *Gemeldet* — never delete the row: *Check* and *Install* have no source |
@@ -228,6 +229,9 @@ the author say no.
 starts calling a program the list does not know produces no hit, because there is
 nothing to search for. That is decided, not an oversight
 (`docs/decisions/0027-requirement-list-central-guarded-by-sync.md`).
+
+**No hit, no line.** A skill without signature hits produces no entry in any
+report section.
 
 ## 3 · The source list
 

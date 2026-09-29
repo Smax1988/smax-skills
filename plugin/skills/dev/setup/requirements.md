@@ -37,7 +37,7 @@ missing. The install confirmation covers this `PATH` change; name it in the
 confirmation list.
 
 ```powershell
-winget install -e --id Graphviz.Graphviz --accept-source-agreements --accept-package-agreements --disable-interactivity
+winget install -e --id Graphviz.Graphviz --accept-source-agreements --accept-package-agreements --disable-interactivity --no-upgrade
 $installRc = $LASTEXITCODE
 $bin = 'C:\Program Files\Graphviz\bin'
 $userPath = [Environment]::GetEnvironmentVariable('Path','User')
@@ -55,5 +55,9 @@ if ((Test-Path (Join-Path $bin 'dot.exe')) -and -not (($userPath -split ';') -co
   `Python 3.x` counts as present.
 - **`npx` servers on native Windows** do not connect when started directly;
   they need `cmd /c`. That is why the Playwright install wraps it.
+- **`claude` itself must be on `PATH`.** The Playwright check and install call
+  `claude mcp`. With an IDE-bundled Claude Code that is not on `PATH`, both
+  report fehlt or fehlgeschlagen although nothing is wrong with the server; run
+  `setup` from a terminal where `claude` resolves.
 - **An existing `playwright` entry with other arguments** (for example the
   Chrome channel) is left alone as long as it reports `Connected`.
