@@ -26,6 +26,8 @@ The repo is public — anyone can add it:
 /plugin install smax@smax-skills
 ```
 
+Then run `/smax:setup` once per machine. It checks what the skills need that the plugin does not ship — Git, PowerShell 7, Node.js, Python, the Playwright MCP server, and optionally the GitHub CLI and Graphviz — and installs what is missing after you confirm each item. Windows only.
+
 Update with `/plugin marketplace update smax-skills`, then `/reload-plugins`. If you develop on the plugin yourself, use the local source from [§6.2](#62-setting-up-the-dev-machine) instead.
 
 Company- and client-specific skills are deliberately not here: they live in the internal plugin `cnx` (marketplace `cnx-skills`, Azure DevOps). Why: `docs/decisions/0025-company-skills-in-separate-plugin.md`.
@@ -152,7 +154,7 @@ The second half of the plugin. The chain above is the long road from idea to lan
 
 ## 2.1 Standalone, outside the chain
 
-These eight call no skill and are called by none. You type the name, done. Arguments are in the tables in §5.
+These nine call no skill and are called by none. You type the name, done. Arguments are in the tables in §5.
 
 | Command | Purpose |
 |---|---|
@@ -164,6 +166,7 @@ These eight call no skill and are called by none. You type the name, done. Argum
 | `nano-vs-colors` | set up syntax highlighting for `nano` under Git Bash, or carry it over to another machine |
 | `find-beer-deals` | find current beer deals nearby |
 | `whats-for-lunch` | summarise today's lunch specials at the regular spots |
+| `setup` | check and install what the skills need on this machine (Windows) |
 
 ## 2.2 Commands that do not stand alone
 
@@ -274,6 +277,7 @@ Mostly derived from **superpowers** and reworked. Which file comes from where an
 | infographic-page | `<topic> [focus]` | Command |
 | data-model-diagram | `<model source (spec, DDL, schema)> [target path]` | Command |
 | md-to-pdf | `<file.md> [more.md ...]` | Skill |
+| setup | — | Command |
 
 ### dev — client & web tasks
 

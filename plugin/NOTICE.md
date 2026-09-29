@@ -279,7 +279,7 @@ Own skills — not even to be looked at when syncing with §1 and §2.
 `infographic-page`, `personal/find-beer-deals`, `personal/nano-vs-colors`.
 
 **Created afterwards:** `data-model-diagram`, `mail-draft`, `md-to-pdf`,
-`proad-job-report`, `sync-solution-items`, `personal/whats-for-lunch`,
+`proad-job-report`, `setup`, `sync-solution-items`, `personal/whats-for-lunch`,
 `personal/lap-training`.
 
 **The first list is closed.** No skill becomes older than the import after the
