@@ -23,5 +23,5 @@ while IFS= read -r p; do
 done < <(printf '%s\n' "$paths" | head -5)
 [ "$count" -gt 5 ] && list="${list}\\n  ... und $((count - 5)) weitere"
 
-printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"%s Datei(en) unter plugin/skills/ sind gestaged:%s\\n\\nWurde /sync-plugin-docs ausgefuehrt? README.md und plugin/NOTICE.md sind daraus abgeleitet."}}\n' \
+printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"ask","permissionDecisionReason":"%s Datei(en) unter plugin/skills/ sind gestaged:%s\\n\\nWurde /sync-plugin-docs ausgefuehrt? README.md, plugin/NOTICE.md und die Anforderungsliste von setup sind daraus abgeleitet."}}\n' \
   "$count" "$list"

@@ -55,8 +55,9 @@ ein Eintrag auszusehen hat, steht im Kopf der Datei.
 
 ## Abgeleitete Dokumente
 
-`README.md` und `plugin/NOTICE.md` sind aus dem Skill-Bestand abgeleitet und
-laufen still auseinander, wenn sie nicht mitgezogen werden.
+`README.md`, `plugin/NOTICE.md` und die Anforderungsliste
+`plugin/skills/dev/setup/requirements.md` sind aus dem Skill-Bestand abgeleitet
+und laufen still auseinander, wenn sie nicht mitgezogen werden.
 
 **Wurde etwas unter `plugin/skills/` oder `plugin/.claude-plugin/` geändert,
 lass vor dem Commit `/sync-plugin-docs` laufen.** Der Skill prüft nur, was

@@ -1,21 +1,23 @@
 ---
 name: sync-plugin-docs
-description: Checks whether README.md and plugin/NOTICE.md still match the skill inventory after changes under plugin/skills/, and brings them up to date. Use before committing whenever something under plugin/skills/ or plugin/.claude-plugin/ has changed.
+description: Checks whether README.md, plugin/NOTICE.md and the setup skill's requirement list still match the skill inventory after changes under plugin/skills/, and brings them up to date. Use before committing whenever something under plugin/skills/ or plugin/.claude-plugin/ has changed.
 ---
 
 # Sync Plugin Docs
 
-`README.md` and `plugin/NOTICE.md` are derived from the skill inventory. Change a
-skill without updating them and the documentation is silently wrong: no error, no
-warning, just a false statement.
+`README.md`, `plugin/NOTICE.md` and the requirement list
+`plugin/skills/dev/setup/requirements.md` are derived from the skill inventory.
+Change a skill without updating them and the documentation is silently wrong: no
+error, no warning, just a false statement.
 
 This skill answers **one** question: *does this change need a documentation
 update?* Not: *is the documentation up to date?* That difference is the entire
 reason it is cheap enough to run before every commit.
 
 Your report is written in German — it is read by the author. **Every text you
-propose** for `README.md` or `plugin/NOTICE.md` is English: both documents are
-English, and a proposal lands in them verbatim. The report around a proposal is
+propose** for `README.md`, `plugin/NOTICE.md` or the requirement list is
+English: all three documents are English, and a proposal lands in them verbatim.
+The report around a proposal is
 output for its reader, the proposal is output for its document
 (`docs/decisions/0021-skill-texts-english-output-reader-language.md`).
 
@@ -28,13 +30,13 @@ git rev-parse --abbrev-ref HEAD
 | Situation | Base | Coverage |
 |---|---|---|
 | Branch other than `main`, with its own commits | `git merge-base main HEAD` | **complete** |
-| On `main`, or a branch without own commits | newest commit up to and including `HEAD` that touched `README.md` or `plugin/NOTICE.md` | **partial** |
+| On `main`, or a branch without own commits | newest commit up to and including `HEAD` that touched one of the three derived documents | **partial** |
 
 ```bash
 # case 1
 git merge-base main HEAD
 # case 2
-git log -1 --format=%H -- README.md plugin/NOTICE.md
+git log -1 --format=%H -- README.md plugin/NOTICE.md plugin/skills/dev/setup/requirements.md
 ```
 
 Both print the full 40-character hash. Abbreviate it before it goes into the
@@ -47,7 +49,7 @@ checking before a commit.
 
 ```
 Basis: merge-base main HEAD = <sha> (Branch-Basis — vollständig)
-Basis: <sha> (Sweep seit letzter README/NOTICE-Pflege — unvollständig)
+Basis: <sha> (Sweep seit letzter Pflege eines abgeleiteten Dokuments — unvollständig)
 ```
 
 Fixed, because the coverage marker is the whole countermeasure to the blind spot
@@ -62,6 +64,12 @@ before it. This is decided and stays
 close it.** No state file, no commit marker, no full comparison. The
 countermeasure is visibility: the first line of the report names the base *and*
 its coverage.
+
+**The requirement list widens that blind spot, deliberately.** Maintaining the
+list moves the sweep base too, so it resets the window for `README.md` and
+`plugin/NOTICE.md` as well. One base per document would be exact, but it costs
+three base lines and three coverage marks for a case the branch base already
+covers completely (`docs/decisions/0027-requirement-list-central-guarded-by-sync.md`).
 
 ## 2 · Affected skills
 
@@ -169,12 +177,64 @@ changes no README fact at all. Reading `README.md` to establish that is the
 waste this table exists to prevent. **nothing** in that row means nothing in
 `README.md` — it does not retract the NOTICE finding from the step above.
 
+### Requirement list third — the trigger is *which lines* changed
+
+`plugin/skills/dev/setup/requirements.md` says which skills need which
+requirement. The column *Signature* holds the strings that give a requirement
+away in a skill's directory; **the change's added and removed lines are
+searched for them**, never the whole skill.
+
+**Skip `plugin/skills/dev/setup/` entirely.** Its `requirements.md` contains
+every signature by construction; searching it would propose `setup` for almost
+every row.
+
+Per affected skill other than `setup`:
+
+```bash
+git diff <base> -- plugin/skills/<group>/<name>/ | grep '^[+-]' | grep -v '^+++\|^---'
+```
+
+Untracked files of a new skill have no diff; read them whole and treat every
+line as added.
+
+For every row of the list, look for each string of its *Signature* — a literal
+substring, case-sensitive, spaces included:
+
+| What you find | Verdict | Section |
+|---|---|---|
+| a hit in an **added** line, and the skill is in neither *Mandatory for* nor *Optional for* of that row | **ask** | *Gemeldet* — name row, skill, file and line, and that *Mandatory for* or *Optional for* is the author's choice. No draft: two candidates and no rule |
+| a hit in a **removed** line, the skill is in that row, and `grep -rnF` finds **no** string of the row's *Signature* left anywhere in the skill's directory | **ask** | *Zu übernehmen* — `alt:` the cell with the skill, `neu:` the cell without it |
+| the skill's directory is **deleted** | **write** | *Geschrieben* — remove the name from every cell of the list |
+| the skill is **renamed** (`name:`) | **write** | *Geschrieben* — replace the name in every cell |
+| `allowed-tools:` names an `mcp__<server>__` prefix that no row's *Signature* carries | **report** | *Gemeldet* |
+| after your writes a row names no skill in either column | **report** | *Gemeldet* — never delete the row: *Check* and *Install* have no source |
+
+**A deleted or renamed skill directory is handled by the two write rows alone.**
+Deleting a directory turns every one of its lines into a removed line, and a
+rename does the same for the old path. Do not run the removed-line row for it -
+that would put the same change under *Geschrieben* and *Zu übernehmen* at once.
+The added-line and removed-line rows apply only to a skill whose directory
+exists before and after the change under the same name.
+
+**Never touch** *Requirement*, *Kind*, *Check*, *Install*, *Needs* or
+*Signature*. They have no source outside the list.
+
+**A hit is evidence, not proof.** `npm test` in a TDD example, `node` in
+`flow-node`, `Playwright` in a sentence about testing — all hit. That is why
+adding is never written. Expect prose hits; report them like any other, and let
+the author say no.
+
+**Known gap: a new requirement without a signature is invisible.** A skill that
+starts calling a program the list does not know produces no hit, because there is
+nothing to search for. That is decided, not an oversight
+(`docs/decisions/0027-requirement-list-central-guarded-by-sync.md`).
+
 ## 3 · The source list
 
 **The question is not „which section does this change touch?" but „where does
 this fact come from?"**
 
-Every fact in `README.md` and `plugin/NOTICE.md` either originates **outside**
+Every fact in the three derived documents either originates **outside**
 the document — in a frontmatter field, the directory layout, a call in a skill
 body, a git command — or it originates nowhere else and lives in the document
 itself. Where it comes from is its **source**, and that settles both things at
@@ -204,6 +264,12 @@ below.
 | NOTICE §3, which of its two lists a member goes in | *Older than the import* is closed — a new member can only join *Created afterwards* | **write** |
 | §3 entry table | **none** | **ask** |
 | §1 prose, §4 judgements, the satellite paragraphs, §6.x | **none** | **ask** |
+| Requirement list: a skill joins a row | *Signature* hit in an added line | **ask** → *Gemeldet* |
+| Requirement list: *Mandatory for* or *Optional for* | **none** | **ask** → *Gemeldet* |
+| Requirement list: a skill leaves a row | *Signature* hit in a removed line, none left in the directory | **ask** → *Zu übernehmen* |
+| Requirement list: a deleted or renamed skill | directory / `name:` | **write** |
+| Requirement list: an MCP server without a row | `allowed-tools:` | **report** |
+| Requirement list: *Requirement*, *Kind*, *Check*, *Install*, *Needs*, *Signature* | **none** | never touched |
 
 ### The verbatim test
 
@@ -273,7 +339,7 @@ column no matter which section or line holds it.
 
 ## 4 · The traps
 
-Ten places where the obvious reading is wrong.
+Eleven places where the obvious reading is wrong.
 
 1. **§2.1 does not list all commands, only the standalone ones.** The
    criterion is in the section's own intro sentence: *"call no skill and are
@@ -328,6 +394,12 @@ Ten places where the obvious reading is wrong.
     „It is under *Substantially rebuilt*" is therefore not an answer — the
     upstream belongs in front of it. The trap is that a `grep` for the heading
     returns two hits and both look right.
+11. **In the requirement list, a hit on a signature is not a requirement.**
+    `test-driven-development` runs `npm test` as an example of the *project's*
+    test command; the skill itself needs no Node. And the setup skill's own
+    files hit every row by construction, which is why `plugin/skills/dev/setup/`
+    is skipped. A hit decides that something is worth asking about — never what
+    the answer is.
 
 **Address the two satellite paragraphs at the end of §5 by their subject, never
 by line number** — one names the callers of `domain-modeling`, the other the
@@ -392,7 +464,7 @@ state should be.
 In addition to every source:
 
 ```bash
-grep -n "<skillname>" README.md plugin/NOTICE.md
+grep -n "<skillname>" README.md plugin/NOTICE.md plugin/skills/dev/setup/requirements.md
 ```
 
 The source list says where a fact comes from; `grep` finds the places it turns up
@@ -518,7 +590,7 @@ mark stapled to it.
 ### Before the report: read what you actually changed
 
 ```bash
-git diff -U0 HEAD -- README.md plugin/NOTICE.md | grep '^@@'
+git diff -U0 HEAD -- README.md plugin/NOTICE.md plugin/skills/dev/setup/requirements.md | grep '^@@'
 ```
 
 **`HEAD` is not optional.** Without it `git diff` shows the worktree against the
@@ -553,7 +625,7 @@ its cells say (no source — **ask**). Listing that hunk under *Geschrieben* cov
 the first and walks the second past the check. So run the other half too:
 
 ```bash
-git diff HEAD -- README.md plugin/NOTICE.md | grep '^+'
+git diff HEAD -- README.md plugin/NOTICE.md plugin/skills/dev/setup/requirements.md | grep '^+'
 ```
 
 **Not one of your `neu:` values may appear in that output.** A `neu:` you can
@@ -603,8 +675,8 @@ a line to a report whose entire content is that there was nothing to do.
 ```
 Basis: merge-base main HEAD = a1b2c3d (Branch-Basis — vollständig)
 Betroffen: <geänderte Dateien unter plugin/, mit Pfad>
-Sicherheitsnetz: <gesuchter Name> — README.md <Zeile> <Abschnitt>, <Zeile> <Abschnitt>; plugin/NOTICE.md <Zeile> <Bucket>
-Geändert: README.md <Hunk>, <Hunk>; plugin/NOTICE.md <Hunk>
+Sicherheitsnetz: <gesuchter Name> — README.md <Zeile> <Abschnitt>, <Zeile> <Abschnitt>; plugin/NOTICE.md <Zeile> <Bucket>; requirements.md <Zeile> <Anforderung>
+Geändert: README.md <Hunk>, <Hunk>; plugin/NOTICE.md <Hunk>; requirements.md <Hunk>
 
 Geschrieben (n)
   1  <Datei> <Stelle> — <was und warum>
@@ -639,7 +711,7 @@ one affected skill means more than one such line, in the order of `Betroffen:`.
 It carries the output of the safety net (§6):
 
 ```bash
-grep -n "<skillname>" README.md plugin/NOTICE.md
+grep -n "<skillname>" README.md plugin/NOTICE.md plugin/skills/dev/setup/requirements.md
 ```
 
 **The numbers in the field come from a final run, after your last edit.** Run the
@@ -680,7 +752,7 @@ and the sections below.
 the closing check of §7:
 
 ```bash
-git diff -U0 HEAD -- README.md plugin/NOTICE.md | grep '^@@'
+git diff -U0 HEAD -- README.md plugin/NOTICE.md plugin/skills/dev/setup/requirements.md | grep '^@@'
 ```
 
 Every hunk header the command printed goes into the field, none left out, each
