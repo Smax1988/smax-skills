@@ -517,12 +517,6 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       trifft es jeden Nutzer — dann lohnt ein zweiter Hook-Matcher, der `Read`
       unterhalb `${CLAUDE_PLUGIN_ROOT}` genehmigt. Fragt sie nicht, genügt eine
       `Read()`-Regel in der eigenen `settings.json`.
-- [ ] **5.12** `writing-plans/SKILL.md:321`: `git add docs/ CONTEXT.md
-      CONTEXT-MAP.md *.slnx 2>/dev/null` bricht komplett ab, sobald ein Pathspec
-      nicht existiert (kein `CONTEXT-MAP.md`, kein `.slnx`), und `2>/dev/null`
-      verschluckt den Fehler. Nicht ausprobiert, Standardverhalten von git.
-      Fertig, wenn nur vorhandene Pfade übergeben werden und ein Test in einem
-      Repo ohne `CONTEXT-MAP.md` den Commit vollständig zeigt.
 - [ ] **5.13** `lap-training`: `16-09` sagt, die dritte Normalform werde in der
       Prüfarbeit „verlangt", `16-10`, 1:1 und 1:n seien „ausdrücklich
       gefordert". Der Themenkatalog (WKO OÖ, Version 2.0, S. 3) sagt nur,

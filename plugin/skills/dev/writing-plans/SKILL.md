@@ -318,7 +318,9 @@ Wait for a yes. If they want a different message or a different set, do that ins
 </HARD-GATE>
 
 ```bash
-git add docs/ CONTEXT.md CONTEXT-MAP.md *.slnx 2>/dev/null
+for p in docs/ CONTEXT.md CONTEXT-MAP.md *.slnx; do
+  if [ -e "$p" ]; then git add -- "$p"; fi   # one missing pathspec makes `git add` stage nothing at all
+done
 git status --short          # confirm nothing unrelated got swept in — show this to the user
 git commit -m "<message from smax:commitMessage>"
 ```
