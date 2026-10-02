@@ -85,10 +85,10 @@
 **Nachhaken bei:** „ruft sich selbst auf" ohne Abbruchbedingung
 
 ### 15-13 · ASCII-Tabelle
-**Themenpunkt:** 15.13 Kenntnisse über ASCII-Tabellen (ergänzt)
+**Themenpunkt:** 15.13 Kenntnisse über ASCII-Tabellen
 **Frage:** Wie ist die ASCII-Tabelle aufgebaut und wozu brauchen Sie sie beim Programmieren?
-**Muss:** Zuordnung von Zahlen zu Zeichen, 128 Einträge von 0 bis 127 · Zeichen werden intern als ihr Zahlenwert gespeichert
-**Sicher:** Aufbau: 0-31 Steuerzeichen, 32 Leerzeichen, 48-57 die Ziffern 0-9, 65-90 A-Z, 97-122 a-z · praktische Folgen: Groß- und Kleinbuchstaben liegen genau 32 auseinander, deshalb funktioniert Umwandeln über Addition · von der Ziffer zum Zahlenwert kommt man über `'7' - '0'` · beim Sortieren stehen Großbuchstaben vor Kleinbuchstaben, weil ihr Code kleiner ist · über 127 beginnt der Bereich, in dem Codierungen auseinanderlaufen (siehe 11-15)
+**Muss:** Zuordnung von Zahlen zu Zeichen, 7 Bit, also 128 Einträge von 0 bis 127 · Zeichen werden intern als ihr Zahlenwert gespeichert
+**Sicher:** Aufbau: 0-31 und 127 (DEL) Steuerzeichen, 32 Leerzeichen, 48-57 die Ziffern 0-9, 65-90 A-Z, 97-122 a-z — 33 nicht druckbare und 95 druckbare Zeichen · praktische Folgen: Groß- und Kleinbuchstaben liegen genau 32 auseinander, deshalb funktioniert Umwandeln über Addition · von der Ziffer zum Zahlenwert kommt man über `'7' - '0'` · beim Sortieren stehen Großbuchstaben vor Kleinbuchstaben, weil ihr Code kleiner ist · über 127 beginnt der Bereich, in dem Codierungen auseinanderlaufen (siehe 11-15)
 **Nachhaken bei:** ASCII erklärt (siehe 01-01), aber kein Bezug zur praktischen Verwendung im Code
 
 ### 15-14 · Datentypen
@@ -99,10 +99,10 @@
 **Nachhaken bei:** Typen aufgezählt, aber Deklaration und Initialisierung nicht unterschieden
 
 ### 15-15 · Variable und Konstante
-**Themenpunkt:** 15.15 Unterschied Variable und Konstante (ergänzt)
+**Themenpunkt:** 15.15 Unterschied Variable und Konstante
 **Frage:** Was ist der Unterschied zwischen einer Variablen und einer Konstanten?
 **Muss:** Der Wert einer Variablen kann sich während der Laufzeit ändern, der einer Konstanten nicht — er wird einmal festgelegt und ist danach unveränderlich
-**Sicher:** Schlüsselwörter je nach Sprache: `const`, `final`, `readonly` · Nutzen: der Compiler verhindert versehentliche Änderungen, und ein benannter Wert wie `MWST_SATZ` ist verständlicher als die Zahl 0,20 mitten im Code · Magic Numbers vermeiden — der Wert steht an einer Stelle und wird dort gepflegt · Konvention: Konstanten oft in GROSSBUCHSTABEN
+**Sicher:** Schlüsselwörter je nach Sprache: `const`, `final`, `readonly` · in C# ist `const` schon beim Kompilieren festgelegt, `readonly` wird erst zur Laufzeit gesetzt (Deklaration oder Konstruktor) · bei Objekten schützen `const` (JavaScript), `final` (Java) und `readonly` (C#) nur die Zuweisung — der Inhalt des Objekts bleibt änderbar · Nutzen: der Compiler verhindert versehentliche Änderungen, und ein benannter Wert wie `MWST_SATZ` ist verständlicher als die Zahl 0,20 mitten im Code · Magic Numbers vermeiden — der Wert steht an einer Stelle und wird dort gepflegt · Konvention: Konstanten oft in GROSSBUCHSTABEN
 **Nachhaken bei:** Unterschied genannt, aber nicht warum man Konstanten überhaupt verwendet
 
 ### 15-16 · Gültigkeitsbereiche
@@ -120,10 +120,10 @@
 **Nachhaken bei:** Schleifenarten genannt, aber kein Auswahlkriterium
 
 ### 15-18 · Kopf- und fußgesteuerte Schleifen
-**Themenpunkt:** 15.18 Fachbegriffe „kopfgesteuert" bzw. „fußgesteuert" im Zusammenhang mit Schleifen (ergänzt)
+**Themenpunkt:** 15.18 Fachbegriffe „kopfgesteuert" bzw. „fußgesteuert" im Zusammenhang mit Schleifen
 **Frage:** Was bedeutet kopfgesteuert und fußgesteuert bei Schleifen?
 **Muss:** Kopfgesteuert: die Bedingung wird **vor** dem Durchlauf geprüft, die Schleife kann also null Mal laufen (`while`, `for`) · fußgesteuert: die Bedingung wird **nach** dem Durchlauf geprüft, die Schleife läuft mindestens einmal (`do-while`)
-**Sicher:** genau darin liegt der einzige Unterschied — mindestens ein Durchlauf oder eventuell keiner · fußgesteuert ist sinnvoll, wenn erst nach dem ersten Durchlauf feststeht, ob weitergemacht wird: Benutzereingabe einlesen und prüfen, Menüwiederholung · kopfgesteuert ist der Normalfall, weil man meist vorher wissen will, ob überhaupt etwas zu tun ist
+**Sicher:** genau darin liegt der einzige Unterschied — mindestens ein Durchlauf oder eventuell keiner · andere Namen: vorprüfend bzw. abweisend für kopfgesteuert, nachprüfend bzw. nicht abweisend für fußgesteuert · fußgesteuert ist sinnvoll, wenn erst nach dem ersten Durchlauf feststeht, ob weitergemacht wird: Benutzereingabe einlesen und prüfen, Menüwiederholung · kopfgesteuert ist der Normalfall, weil man meist vorher wissen will, ob überhaupt etwas zu tun ist
 **Nachhaken bei:** Begriffe zugeordnet, aber die praktische Folge (null gegen mindestens ein Durchlauf) nicht ausgesprochen
 
 ### 15-19 · Verzweigungen

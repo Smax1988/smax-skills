@@ -498,13 +498,6 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
 
 ## 5 · Kleinkram
 
-- [ ] **5.4** `lap-training`: die sieben mit `(ergänzt)` markierten Fragen
-      gegenlesen. Sie stehen im WKO-Themenkatalog, fehlten aber in Smax'
-      Vorbereitungs-MD — die Antworten sind daher ohne Vorlage geschrieben und
-      als einzige ungeprüft gegen eine zweite Quelle. Betroffen: `04-04`,
-      `12-14`, `15-13`, `15-15`, `15-18`, `16-04`, `16-07`. Fertig, wenn die
-      `(ergänzt)`-Marker entfernt sind.
-
 - [ ] **5.5** `lap-training`: die Musterantworten stammen aus einer
       KI-generierten Vorbereitungsdatei und sind nicht gegen eine Fachquelle
       geprüft. Der Skill sagt im Training an, wenn er einer Antwort
@@ -536,3 +529,9 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       verschluckt den Fehler. Nicht ausprobiert, Standardverhalten von git.
       Fertig, wenn nur vorhandene Pfade übergeben werden und ein Test in einem
       Repo ohne `CONTEXT-MAP.md` den Commit vollständig zeigt.
+- [ ] **5.13** `lap-training`: `16-09` sagt, die dritte Normalform werde in der
+      Prüfarbeit „verlangt", `16-10`, 1:1 und 1:n seien „ausdrücklich
+      gefordert". Der Themenkatalog (WKO OÖ, Version 2.0, S. 3) sagt nur,
+      diese Punkte „können … abgeprüft werden". Beim Gegenlesen von `16-07` am
+      02.10.2026 aufgefallen und dort schon korrigiert. Fertig, wenn beide
+      Stellen „kann geprüft werden" statt „ist gefordert" sagen.

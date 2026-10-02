@@ -22,10 +22,10 @@
 **Nachhaken bei:** DBMS und Datenbank synonym verwendet
 
 ### 16-04 · CMS und Datenbank
-**Themenpunkt:** 16.4 Fachbegriff Content Management System (CMS) (ergänzt)
+**Themenpunkt:** 16.4 Fachbegriff Content Management System (CMS)
 **Frage:** Was ist ein CMS und welche Rolle spielt die Datenbank darin?
-**Muss:** System zur Verwaltung von Inhalten ohne Programmierkenntnisse · die Inhalte liegen nicht in Dateien, sondern in einer Datenbank und werden beim Aufruf in die Seitenvorlage eingesetzt
-**Sicher:** Voraussetzungen: Webserver, Skriptsprache (meist PHP), Datenbank (meist MySQL/MariaDB) · in der Datenbank stehen Beiträge, Seiten, Benutzer, Kategorien und Konfiguration; Bilder und Dateien liegen daneben im Dateisystem · Trennung von Inhalt, Struktur und Darstellung · Systeme: WordPress, TYPO3, Drupal, Shopware · Folge für den Betrieb: eine Sicherung muss Datenbank **und** Dateien umfassen, eines allein nützt nichts
+**Muss:** Software, mit der Inhalte ohne Programmierkenntnisse erstellt, bearbeitet und veröffentlicht werden · bei den verbreiteten Systemen liegen die Inhalte nicht in fertigen Seiten, sondern in einer Datenbank und werden beim Aufruf in die Seitenvorlage eingesetzt
+**Sicher:** Voraussetzungen: Webserver, Skriptsprache (meist PHP), Datenbank (meist MySQL/MariaDB) · in der Datenbank stehen Beiträge, Seiten, Benutzer, Kategorien und Konfiguration; Bilder und Dateien liegen daneben im Dateisystem · Trennung von Inhalt und Darstellung: das Design lässt sich über Templates wechseln, ohne die Inhalte anzufassen · Systeme: WordPress, TYPO3, Drupal, Joomla · Ausnahme: Flat-File-CMS wie Grav oder Kirby speichern die Inhalte in Dateien und brauchen keine Datenbank · Folge für den Betrieb: eine Sicherung muss Datenbank **und** Dateien umfassen, eines allein nützt nichts
 **Nachhaken bei:** CMS erklärt (siehe 11-11), aber ohne Bezug zur Datenhaltung — darum geht es in diesem Kapitel
 
 ### 16-05 · Integrität
@@ -43,10 +43,10 @@
 **Nachhaken bei:** „doppelte Daten" ohne die Inkonsistenzgefahr
 
 ### 16-07 · Vorgehen bei der Datenmodellierung
-**Themenpunkt:** 16.7 Vorgangsweise bei der Datenmodellierung (RDB) (ergänzt)
+**Themenpunkt:** 16.7 Vorgangsweise bei der Datenmodellierung (RDB)
 **Frage:** Sie sollen für eine Anwendung eine relationale Datenbank modellieren. Wie gehen Sie vor?
 **Muss:** Anforderungen analysieren → Entitäten und ihre Attribute bestimmen → Beziehungen mit ihren Kardinalitäten festlegen → ER-Diagramm erstellen → in Tabellen überführen → normalisieren
-**Sicher:** Entitäten sind die Dinge, über die Daten gespeichert werden (Kunde, Bestellung, Artikel) · Kardinalitäten 1:1, 1:n und m:n bestimmen; m:n wird über eine Zwischentabelle aufgelöst · Primär- und Fremdschlüssel festlegen, dann Datentypen und Constraints · Normalisierung bis zur dritten Normalform — in der LAP-Prüfarbeit ausdrücklich gefordert · zum Schluss gegen echte Beispieldaten prüfen: lassen sich alle geforderten Abfragen beantworten
+**Sicher:** die drei Stufen beim Namen: konzeptionelles Modell (ER-Diagramm, unabhängig vom Datenbanksystem) → logisches Modell (Tabellen, Schlüssel, Normalisierung) → physisches Modell (Umsetzung im konkreten DBMS mit Datentypen und Indizes) · Entitäten sind die Dinge, über die Daten gespeichert werden (Kunde, Bestellung, Artikel) · Kardinalitäten 1:1, 1:n und m:n bestimmen; m:n wird über eine Zwischentabelle aufgelöst · Primär- und Fremdschlüssel festlegen, dann Datentypen und Constraints · Normalisierung bis zur dritten Normalform — der Themenkatalog nennt sie als möglichen Punkt der Prüfarbeit · zum Schluss gegen echte Beispieldaten prüfen: lassen sich alle geforderten Abfragen beantworten
 **Nachhaken bei:** direkt bei Tabellen begonnen, ohne Entitäten und Beziehungen zu klären
 
 ### 16-08 · SQL-Grundoperationen

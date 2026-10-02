@@ -22,10 +22,10 @@
 **Nachhaken bei:** nur „Anleitung" ohne weitere Bestandteile
 
 ### 04-04 · Aufbereitung einer technischen Dokumentation
-**Themenpunkt:** 4.4 Aufbereitung einer technischen Dokumentation/technisches Protokoll (ergänzt)
+**Themenpunkt:** 4.4 Aufbereitung einer technischen Dokumentation/technisches Protokoll
 **Frage:** Sie haben alle Inhalte beisammen — wie bereiten Sie eine technische Dokumentation auf, damit sie auch benutzt wird?
 **Muss:** Aufbereitung richtet sich nach der Zielgruppe: Anwenderdokumentation anders als Entwicklerdokumentation · klare Gliederung, damit man gezielt nachschlagen kann
-**Sicher:** durchsuchbar und verlinkt statt Fließtext, Inhaltsverzeichnis und Index · Screenshots, Diagramme und Beispiele statt reiner Beschreibung · einheitliche Begriffe und Formatierung · Versionierung und Pflegeverantwortung festlegen, sonst veraltet sie still · Format passend zum Zweck: FAQ und Wiki für den Alltag, PDF für die Abnahme
+**Sicher:** durchsuchbar und verlinkt statt Fließtext, Inhaltsverzeichnis und Index · Screenshots, Diagramme und Beispiele statt reiner Beschreibung · verständliche, eindeutige Sprache, einheitliche Begriffe und Formatierung · Versionierung und Pflegeverantwortung festlegen, sonst veraltet sie still · Medium passend zum Zweck, z. B. Wiki oder Online-Hilfe zum Nachschlagen, ein versioniertes PDF für die Übergabe · beim technischen Protokoll heißt Aufbereitung: feste Vorlage mit Kopfdaten, damit jedes Protokoll gleich aufgebaut und vergleichbar ist (Inhalt siehe 04-02)
 **Nachhaken bei:** Antwort bleibt beim Inhalt (siehe 04-03) statt bei Form und Zielgruppe
 
 ### 04-05 · Roll-out von Applikationen

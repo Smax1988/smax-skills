@@ -92,10 +92,10 @@
 **Nachhaken bei:** nur „das Projekt leiten" ohne einzelne Aufgaben
 
 ### 12-14 · Dokumente eines Projekts
-**Themenpunkt:** 12.14 Kenntnisse über Dokumentationen eines Projektes (ergänzt)
+**Themenpunkt:** 12.14 Kenntnisse über Dokumentationen eines Projektes
 **Frage:** Welche Dokumente entstehen im Lauf eines Projekts?
-**Muss:** Mindestens vier: Projektauftrag, Lasten- und Pflichtenheft, Projektstrukturplan und Zeitplan, Protokolle und Statusberichte, Testprotokolle, Abnahme- und Abschlussbericht
-**Sicher:** Zuordnung zum Projektverlauf: Auftrag und Lastenheft am Anfang, Pläne in der Planungsphase, Protokolle und Änderungslogs laufend, Test- und Abnahmedokumente am Ende · dazu technische Dokumentation und Betriebshandbuch für die Zeit danach · Risikoregister und Änderungsanträge · Faustregel: so viel Dokumentation wie nötig, damit sie gepflegt wird und nicht verwaist
+**Muss:** Mindestens vier: Projektauftrag, Lasten- und Pflichtenheft, Projektstrukturplan und Zeitplan, Sitzungsprotokolle und Fortschrittsberichte, Testprotokolle, Abnahmeprotokoll, Projektabschlussbericht
+**Sicher:** Zuordnung zum Projektverlauf: Auftrag und Lastenheft am Anfang, Pläne in der Planungsphase, Protokolle und Änderungslogs laufend, Test- und Abnahmedokumente am Ende · zwei Arten unterscheiden: Dokumentation des Projektverlaufs (Projektmanagement) und Dokumentation des Ergebnisses (technische Dokumentation, Betriebshandbuch für die Zeit danach) · das Projekthandbuch bündelt die Projektmanagement-Dokumente an einer Stelle · Risikoregister und Änderungsanträge · Faustregel: so viel Dokumentation wie nötig, damit sie gepflegt wird und nicht verwaist
 **Nachhaken bei:** nur die technische Dokumentation genannt, Projektdokumente fehlen
 
 ### 12-15 · Projektauftrag
