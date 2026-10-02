@@ -498,11 +498,6 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
 
 ## 5 · Kleinkram
 
-- [ ] **5.3** Backups der Setup-Umstellung löschen, sobald das neue Setup ein
-      paar Tage getragen hat: `~/.claude/settings.json.bak-predev`,
-      `~/.claude/plugins/known_marketplaces.json.bak-predev`,
-      `~/.claude/plugins/installed_plugins.json.bak-predev`.
-
 - [ ] **5.4** `lap-training`: die sieben mit `(ergänzt)` markierten Fragen
       gegenlesen. Sie stehen im WKO-Themenkatalog, fehlten aber in Smax'
       Vorbereitungs-MD — die Antworten sind daher ohne Vorlage geschrieben und
