@@ -179,7 +179,7 @@
 **Themenpunkt:** 11.26 Einsatzgebiete Bootstrap
 **Frage:** Wofür setzt man Bootstrap ein?
 **Muss:** CSS-Framework für Gestaltung und responsives Layout — fertige Buttons, Formulare, Navigationen und ein Rastersystem
-**Sicher:** das Grid arbeitet mit 12 Spalten und Breakpoints, dadurch passt sich das Layout ohne eigenes CSS an die Bildschirmbreite an · spart Gestaltungsaufwand und liefert ein einheitliches Erscheinungsbild · Kehrseite: Seiten sehen einander ähnlich, und man lädt viel CSS mit, das man nicht braucht · in der LAP-Prüfarbeit ausdrücklich als Beispiel genannt
+**Sicher:** das Grid arbeitet mit 12 Spalten und Breakpoints, dadurch passt sich das Layout ohne eigenes CSS an die Bildschirmbreite an · spart Gestaltungsaufwand und liefert ein einheitliches Erscheinungsbild · Kehrseite: Seiten sehen einander ähnlich, und man lädt viel CSS mit, das man nicht braucht · der Einsatz eines Frameworks zur Oberflächengestaltung kann im 2. Teil der LAP-Prüfarbeit geprüft werden — der Themenkatalog nennt Bootstrap dort als Beispiel
 **Nachhaken bei:** „macht die Seite responsive" ohne Grid oder Komponenten
 
 ### 11-27 · jQuery
@@ -235,7 +235,7 @@
 **Themenpunkt:** 11.34 Kenntnisse über Programmiersprachen für mobile Anwendungen/Internet
 **Frage:** Womit entwickelt man mobile Apps, womit Webanwendungen?
 **Muss:** Nativ: Swift für iOS, Kotlin (oder Java) für Android · Web: HTML, CSS und JavaScript als Grundlage
-**Sicher:** plattformübergreifend: React Native, Flutter (Dart), .NET MAUI — eine Codebasis für beide Systeme · React Native ist in der LAP-Prüfarbeit ausdrücklich genannt · Web serverseitig: PHP, C#, Java, Python, Node.js · Abwägung nativ gegen cross-platform: nativ bringt volle Gerätefunktion und beste Leistung, cross-platform spart Entwicklungsaufwand
+**Sicher:** plattformübergreifend: React Native, Flutter (Dart), .NET MAUI — eine Codebasis für beide Systeme · Applikationen mit React Native können im 2. Teil der LAP-Prüfarbeit geprüft werden — der Themenkatalog nennt es namentlich als möglichen Punkt · Web serverseitig: PHP, C#, Java, Python, Node.js · Abwägung nativ gegen cross-platform: nativ bringt volle Gerätefunktion und beste Leistung, cross-platform spart Entwicklungsaufwand
 **Nachhaken bei:** nur native Sprachen genannt, plattformübergreifende Ansätze fehlen
 
 ### 11-35 · Java im Web

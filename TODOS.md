@@ -517,12 +517,3 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       trifft es jeden Nutzer — dann lohnt ein zweiter Hook-Matcher, der `Read`
       unterhalb `${CLAUDE_PLUGIN_ROOT}` genehmigt. Fragt sie nicht, genügt eine
       `Read()`-Regel in der eigenen `settings.json`.
-- [ ] **5.15** `lap-training`, `questions/11-informatik.md`: `11-` Zeile 182
-      (Bootstrap, „in der LAP-Prüfarbeit ausdrücklich als Beispiel genannt")
-      und Zeile 238 (React Native, „in der LAP-Prüfarbeit ausdrücklich
-      genannt") behaupten eine Nennung, die nicht gegen den Themenkatalog
-      geprüft ist. Am 02.10.2026 bei 5.13 per Suche nach derselben Art
-      Behauptung gefunden; anders als dort geht es nicht um „gefordert" gegen
-      „kann geprüft werden", sondern darum, ob und wo die Nennung überhaupt
-      steht (Themenkatalog oder Prüfarbeit-Angabe). Fertig, wenn beide Stellen
-      belegt sind oder die Quelle richtig benennen.
