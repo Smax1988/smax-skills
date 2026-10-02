@@ -60,14 +60,14 @@
 **Themenpunkt:** 16.9 Kenntnisse über die ersten drei Normalformen im Zusammenhang mit Datenbanken
 **Frage:** Erklären Sie mir die ersten drei Normalformen.
 **Muss:** 1NF: alle Werte sind atomar, keine Mehrfachwerte in einer Zelle · 2NF: 1NF erfüllt und jedes Nicht-Schlüsselattribut hängt vom **gesamten** Primärschlüssel ab, nicht nur von einem Teil · 3NF: 2NF erfüllt und kein Nicht-Schlüsselattribut hängt von einem anderen Nicht-Schlüsselattribut ab (keine transitiven Abhängigkeiten)
-**Sicher:** 1NF-Verstoß: mehrere Telefonnummern in einer Zelle · 2NF ist nur bei zusammengesetztem Primärschlüssel überhaupt verletzbar · 3NF-Verstoß: PLZ und Ort stehen in der Kundentabelle, der Ort hängt an der PLZ, nicht am Kunden · Ziel: Redundanz und Anomalien beseitigen · Preis: mehr Tabellen und mehr Joins · in der LAP-Prüfarbeit wird die dritte Normalform verlangt · ein eigenes Beispiel griffbereit haben
+**Sicher:** 1NF-Verstoß: mehrere Telefonnummern in einer Zelle · 2NF ist nur bei zusammengesetztem Primärschlüssel überhaupt verletzbar · 3NF-Verstoß: PLZ und Ort stehen in der Kundentabelle, der Ort hängt an der PLZ, nicht am Kunden · Ziel: Redundanz und Anomalien beseitigen · Preis: mehr Tabellen und mehr Joins · die dritte Normalform kann in der LAP-Prüfarbeit geprüft werden — der Themenkatalog nennt sie als möglichen Punkt · ein eigenes Beispiel griffbereit haben
 **Nachhaken bei:** Definitionen auswendig, aber ohne Beispiel für einen Verstoß — genau danach wird gefragt
 
 ### 16-10 · Primärschlüssel, Fremdschlüssel, Beziehungen
 **Themenpunkt:** 16.10 Fachbegriffe Primärschlüssel, Fremdschlüssel, Relationen
 **Frage:** Erklären Sie Primärschlüssel, Fremdschlüssel und die Beziehungstypen.
 **Muss:** Primärschlüssel: identifiziert jede Zeile eindeutig, darf nicht NULL sein · Fremdschlüssel: verweist auf den Primärschlüssel einer anderen Tabelle und stellt damit die Beziehung her · Beziehungstypen 1:1, 1:n, m:n
-**Sicher:** m:n lässt sich relational nicht direkt abbilden und wird über eine Zwischentabelle mit zwei Fremdschlüsseln aufgelöst — Beispiel Schüler und Kurse · bei 1:n steht der Fremdschlüssel immer auf der n-Seite · zusammengesetzter Primärschlüssel aus mehreren Spalten möglich · künstlicher Schlüssel (fortlaufende ID) gegen natürlichen Schlüssel · in der Prüfarbeit sind ausdrücklich 1:1 und 1:n gefordert
+**Sicher:** m:n lässt sich relational nicht direkt abbilden und wird über eine Zwischentabelle mit zwei Fremdschlüsseln aufgelöst — Beispiel Schüler und Kurse · bei 1:n steht der Fremdschlüssel immer auf der n-Seite · zusammengesetzter Primärschlüssel aus mehreren Spalten möglich · künstlicher Schlüssel (fortlaufende ID) gegen natürlichen Schlüssel · 1:1 und 1:n können in der Prüfarbeit geprüft werden — der Themenkatalog nennt sie als mögliche Punkte
 **Nachhaken bei:** m:n genannt, aber die Zwischentabelle fehlt
 
 ### 16-11 · Index

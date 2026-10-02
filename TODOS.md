@@ -517,12 +517,6 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       trifft es jeden Nutzer — dann lohnt ein zweiter Hook-Matcher, der `Read`
       unterhalb `${CLAUDE_PLUGIN_ROOT}` genehmigt. Fragt sie nicht, genügt eine
       `Read()`-Regel in der eigenen `settings.json`.
-- [ ] **5.13** `lap-training`: `16-09` sagt, die dritte Normalform werde in der
-      Prüfarbeit „verlangt", `16-10`, 1:1 und 1:n seien „ausdrücklich
-      gefordert". Der Themenkatalog (WKO OÖ, Version 2.0, S. 3) sagt nur,
-      diese Punkte „können … abgeprüft werden". Beim Gegenlesen von `16-07` am
-      02.10.2026 aufgefallen und dort schon korrigiert. Fertig, wenn beide
-      Stellen „kann geprüft werden" statt „ist gefordert" sagen.
 - [ ] **5.14** `setup/requirements.md`: Die Zeile *PowerShell 7* nennt seit
       02.10.2026 keinen Skill mehr — `sync-solution-items` war der einzige und
       läuft jetzt auch unter Windows PowerShell 5.1. `setup` prüft und
@@ -533,3 +527,12 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       ` ```powershell `-Blöcke faktisch unter pwsh 7 ausführen — dann fehlt der
       Zeile aber ein Skill, der das belegt. Fertig, wenn die Zeile weg ist oder
       wieder mindestens einen Skill nennt.
+- [ ] **5.15** `lap-training`, `questions/11-informatik.md`: `11-` Zeile 182
+      (Bootstrap, „in der LAP-Prüfarbeit ausdrücklich als Beispiel genannt")
+      und Zeile 238 (React Native, „in der LAP-Prüfarbeit ausdrücklich
+      genannt") behaupten eine Nennung, die nicht gegen den Themenkatalog
+      geprüft ist. Am 02.10.2026 bei 5.13 per Suche nach derselben Art
+      Behauptung gefunden; anders als dort geht es nicht um „gefordert" gegen
+      „kann geprüft werden", sondern darum, ob und wo die Nennung überhaupt
+      steht (Themenkatalog oder Prüfarbeit-Angabe). Fertig, wenn beide Stellen
+      belegt sind oder die Quelle richtig benennen.
