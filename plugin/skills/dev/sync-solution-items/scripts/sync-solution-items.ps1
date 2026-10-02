@@ -38,14 +38,47 @@ param(
 $ErrorActionPreference = 'Stop'
 
 # Files that are never solution items even when they sit under docs/. Names
-# starting with '_' or '.' are excluded as well — see the filter below.
+# starting with '_' or '.' are excluded as well - see the filter below.
 $ExcludedSegment = '00_Archive'
 $JunkNames = @('.DS_Store', 'Thumbs.db', 'desktop.ini')
+
+# Every git call goes through here, because a bare one breaks in three ways
+# that depend on the PowerShell edition and the console it runs in:
+#
+# - Windows PowerShell 5.1 turns the redirected stderr of a native program into
+#   a terminating error under 'Stop'. "Not a git repository" is an answer here,
+#   not a failure, so the preference is relaxed for the call.
+# - 5.1 pipes strings to a native program as ASCII ($OutputEncoding), so every
+#   non-ASCII character of a path reaches git as "?". PowerShell 7 defaults to
+#   UTF-8. The assignment sits at script scope on purpose: 5.1 ignores a
+#   function-local $OutputEncoding for the pipe.
+# - git writes raw UTF-8, which PowerShell decodes with the console's output
+#   encoding - an OEM code page in a plain console window. That one is process
+#   state and has to be put back.
+$utf8 = New-Object System.Text.UTF8Encoding($false)
+$OutputEncoding = $utf8
+
+function Invoke-Git {
+    param([string[]]$Arguments, [string]$InputText)
+
+    if (-not (Get-Command git -ErrorAction SilentlyContinue)) { return }
+
+    $consoleEncoding = [Console]::OutputEncoding
+    $ErrorActionPreference = 'Continue'
+    try {
+        try { [Console]::OutputEncoding = $utf8 } catch { }
+        if ($PSBoundParameters.ContainsKey('InputText')) { $InputText | & git @Arguments 2>$null }
+        else { & git @Arguments 2>$null }
+    }
+    finally {
+        try { [Console]::OutputEncoding = $consoleEncoding } catch { }
+    }
+}
 
 # --- locate repo, solution and docs ------------------------------------------
 
 if (-not $RepoRoot) {
-    $RepoRoot = git rev-parse --show-toplevel 2>$null
+    $RepoRoot = Invoke-Git -Arguments 'rev-parse', '--show-toplevel'
     if (-not $RepoRoot) { $RepoRoot = (Get-Location).Path }
 }
 # Get-Item, not Resolve-Path: Resolve-Path preserves 8.3 short names ("MAXIMI~1")
@@ -58,10 +91,10 @@ if (-not $SolutionPath) {
     if ($found.Count -eq 0) {
         $classic = @(Get-ChildItem -LiteralPath $RepoRoot -Filter '*.sln' -File)
         if ($classic.Count -gt 0) {
-            Write-Host "UEBERSPRUNGEN: $($classic[0].Name) ist eine klassische .sln. Dieses Skript unterstuetzt nur .slnx — Solution Items bitte in Visual Studio pflegen."
+            Write-Host "UEBERSPRUNGEN: $($classic[0].Name) ist eine klassische .sln. Dieses Skript unterstuetzt nur .slnx - Solution Items bitte in Visual Studio pflegen."
             exit 0
         }
-        Write-Host "UEBERSPRUNGEN: keine Solution in $RepoRoot — nichts zu spiegeln."
+        Write-Host "UEBERSPRUNGEN: keine Solution in $RepoRoot - nichts zu spiegeln."
         exit 0
     }
     if ($found.Count -gt 1) {
@@ -103,7 +136,7 @@ $onDisk = @(
 # --- drop what git ignores ----------------------------------------------------
 
 # Build artefacts and generated intermediates sit under docs/ but are not repo
-# content — listing them shows every developer a file that is not in the repo.
+# content - listing them shows every developer a file that is not in the repo.
 # git itself is asked rather than re-implementing .gitignore matching: nested
 # ignore files, negations and the global excludes all come for free. No git, no
 # repo, or a git that fails: the filter is skipped rather than guessed at.
@@ -112,18 +145,10 @@ if ($onDisk.Count -gt 0 -and (Get-Command git -ErrorAction SilentlyContinue)) {
     # into a native program, and without it the last path reaches git as
     # "docs/x.md`r" and never matches.
     #
-    # Non-ASCII paths need two more things to come back the way they went in.
     # core.quotePath=false stops git from answering "docs/\303\244.md", quotes
-    # included. And git then writes raw UTF-8, which PowerShell decodes with the
-    # console's output encoding - an OEM code page in a plain console window.
-    $consoleEncoding = [Console]::OutputEncoding
-    try {
-        try { [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false) } catch { }
-        $ignoredOutput = (($onDisk -join "`n") + "`n") | & git -C $RepoRoot -c core.quotePath=false check-ignore --stdin 2>$null
-    }
-    finally {
-        try { [Console]::OutputEncoding = $consoleEncoding } catch { }
-    }
+    # included, for a path with non-ASCII characters.
+    $ignoredOutput = Invoke-Git -InputText (($onDisk -join "`n") + "`n") `
+        -Arguments '-C', $RepoRoot, '-c', 'core.quotePath=false', 'check-ignore', '--stdin'
     # 0 = some path is ignored, 1 = none are. Anything else (128: not a repo)
     # means the answer is unusable and nothing gets filtered.
     if ($LASTEXITCODE -le 1) {
@@ -237,12 +262,12 @@ foreach ($p in $added) { Write-Host "  + $p" }
 foreach ($p in $removed) { Write-Host "  - $p" }
 
 if ($added.Count -eq 0 -and $removed.Count -eq 0) {
-    Write-Host "Solution Items sind aktuell — $($onDisk.Count) Datei(en) unter $DocsDir/ gespiegelt, nichts zu tun."
+    Write-Host "Solution Items sind aktuell - $($onDisk.Count) Datei(en) unter $DocsDir/ gespiegelt, nichts zu tun."
     exit 0
 }
 
 if ($DryRun) {
-    Write-Host "DryRun: $($added.Count) hinzuzufuegen, $($removed.Count) zu entfernen — $([IO.Path]::GetFileName($SolutionPath)) nicht geaendert."
+    Write-Host "DryRun: $($added.Count) hinzuzufuegen, $($removed.Count) zu entfernen - $([IO.Path]::GetFileName($SolutionPath)) nicht geaendert."
     exit 0
 }
 

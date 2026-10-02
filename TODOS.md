@@ -517,12 +517,6 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       trifft es jeden Nutzer — dann lohnt ein zweiter Hook-Matcher, der `Read`
       unterhalb `${CLAUDE_PLUGIN_ROOT}` genehmigt. Fragt sie nicht, genügt eine
       `Read()`-Regel in der eigenen `settings.json`.
-- [ ] **5.11** `sync-solution-items.ps1` lässt sich unter Windows PowerShell 5.1
-      nicht parsen. Die Datei ist UTF-8 ohne BOM und enthält Gedankenstriche in
-      doppelt gequoteten Strings (Z. 61, 64, 240, 245); 5.1 liest sie als cp1252,
-      und das Byte 0x94 beendet den String. Fertig, wenn das Skript ein
-      `#Requires -Version 7` trägt (klare Meldung statt Parserfehler) oder die
-      Striche durch ASCII ersetzt sind und es auch unter 5.1 parst.
 - [ ] **5.12** `writing-plans/SKILL.md:321`: `git add docs/ CONTEXT.md
       CONTEXT-MAP.md *.slnx 2>/dev/null` bricht komplett ab, sobald ein Pathspec
       nicht existiert (kein `CONTEXT-MAP.md`, kein `.slnx`), und `2>/dev/null`
@@ -535,3 +529,13 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       diese Punkte „können … abgeprüft werden". Beim Gegenlesen von `16-07` am
       02.10.2026 aufgefallen und dort schon korrigiert. Fertig, wenn beide
       Stellen „kann geprüft werden" statt „ist gefordert" sagen.
+- [ ] **5.14** `setup/requirements.md`: Die Zeile *PowerShell 7* nennt seit
+      02.10.2026 keinen Skill mehr — `sync-solution-items` war der einzige und
+      läuft jetzt auch unter Windows PowerShell 5.1. `setup` prüft und
+      installiert PowerShell 7 damit weiter, ohne dass ein Skill es braucht.
+      Die Zeile zu löschen ist Sache des Autors (*Check* und *Install* haben
+      keine Quelle, `sync-plugin-docs` fasst sie nicht an). Zu entscheiden:
+      Zeile streichen, oder behalten, weil die Skills ihre
+      ` ```powershell `-Blöcke faktisch unter pwsh 7 ausführen — dann fehlt der
+      Zeile aber ein Skill, der das belegt. Fertig, wenn die Zeile weg ist oder
+      wieder mindestens einen Skill nennt.
