@@ -111,7 +111,19 @@ if ($onDisk.Count -gt 0 -and (Get-Command git -ErrorAction SilentlyContinue)) {
     # The trailing LF is load-bearing: PowerShell appends CRLF to a string piped
     # into a native program, and without it the last path reaches git as
     # "docs/x.md`r" and never matches.
-    $ignoredOutput = (($onDisk -join "`n") + "`n") | & git -C $RepoRoot check-ignore --stdin 2>$null
+    #
+    # Non-ASCII paths need two more things to come back the way they went in.
+    # core.quotePath=false stops git from answering "docs/\303\244.md", quotes
+    # included. And git then writes raw UTF-8, which PowerShell decodes with the
+    # console's output encoding - an OEM code page in a plain console window.
+    $consoleEncoding = [Console]::OutputEncoding
+    try {
+        try { [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false) } catch { }
+        $ignoredOutput = (($onDisk -join "`n") + "`n") | & git -C $RepoRoot -c core.quotePath=false check-ignore --stdin 2>$null
+    }
+    finally {
+        try { [Console]::OutputEncoding = $consoleEncoding } catch { }
+    }
     # 0 = some path is ignored, 1 = none are. Anything else (128: not a repo)
     # means the answer is unusable and nothing gets filtered.
     if ($LASTEXITCODE -le 1) {
@@ -120,8 +132,13 @@ if ($onDisk.Count -gt 0 -and (Get-Command git -ErrorAction SilentlyContinue)) {
             if ($line) { $ignored[$line.Replace([char]92, '/')] = $true }
         }
         if ($ignored.Count -gt 0) {
+            # Count what the filter removed, not what git answered: the two
+            # differ exactly when an answer fails to match its path.
+            $before = $onDisk.Count
             $onDisk = @($onDisk | Where-Object { -not $ignored.ContainsKey($_) })
-            Write-Host "  (uebersprungen: $($ignored.Count) von git ignorierte Datei(en))"
+            if ($onDisk.Count -lt $before) {
+                Write-Host "  (uebersprungen: $($before - $onDisk.Count) von git ignorierte Datei(en))"
+            }
         }
     }
 }
