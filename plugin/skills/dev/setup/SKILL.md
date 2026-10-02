@@ -45,8 +45,8 @@ Why exactly this and nothing else:
 
 - **Git Bash and `powershell.exe` exist on every Windows machine that runs
   Claude Code.** The PowerShell tool may be 5.1, `pwsh` or disabled, and `pwsh`
-  itself may be one of the missing requirements - a check that needs it would
-  hide the gap it is meant to report.
+  is not a requirement of the skills - nothing guarantees it is installed, and
+  a check that needs it would fail on a machine that lacks nothing.
 - **A file, not stdin.** With `-File -` PowerShell reads interactively: a
   statement spanning two lines swallows every line after it, and the process
   still exits 0.
@@ -104,7 +104,7 @@ called `npx` directly.
 All rows, in row order:
 
 ```
-Setup - 7 Anforderungen geprüft
+Setup - 6 Anforderungen geprüft
 
 | Anforderung | Status | Art | Braucht es |
 |---|---|---|---|

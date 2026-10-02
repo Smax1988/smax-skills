@@ -517,16 +517,6 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       trifft es jeden Nutzer — dann lohnt ein zweiter Hook-Matcher, der `Read`
       unterhalb `${CLAUDE_PLUGIN_ROOT}` genehmigt. Fragt sie nicht, genügt eine
       `Read()`-Regel in der eigenen `settings.json`.
-- [ ] **5.14** `setup/requirements.md`: Die Zeile *PowerShell 7* nennt seit
-      02.10.2026 keinen Skill mehr — `sync-solution-items` war der einzige und
-      läuft jetzt auch unter Windows PowerShell 5.1. `setup` prüft und
-      installiert PowerShell 7 damit weiter, ohne dass ein Skill es braucht.
-      Die Zeile zu löschen ist Sache des Autors (*Check* und *Install* haben
-      keine Quelle, `sync-plugin-docs` fasst sie nicht an). Zu entscheiden:
-      Zeile streichen, oder behalten, weil die Skills ihre
-      ` ```powershell `-Blöcke faktisch unter pwsh 7 ausführen — dann fehlt der
-      Zeile aber ein Skill, der das belegt. Fertig, wenn die Zeile weg ist oder
-      wieder mindestens einen Skill nennt.
 - [ ] **5.15** `lap-training`, `questions/11-informatik.md`: `11-` Zeile 182
       (Bootstrap, „in der LAP-Prüfarbeit ausdrücklich als Beispiel genannt")
       und Zeile 238 (React Native, „in der LAP-Prüfarbeit ausdrücklich

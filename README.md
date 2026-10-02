@@ -26,7 +26,7 @@ The repo is public — anyone can add it:
 /plugin install smax@smax-skills
 ```
 
-Then run `/smax:setup` once per machine. It checks what the skills need that the plugin does not ship — Git, PowerShell 7, Node.js, Python, the Playwright MCP server, and optionally the GitHub CLI and Graphviz — and installs what is missing after you confirm each item. Windows only.
+Then run `/smax:setup` once per machine. It checks what the skills need that the plugin does not ship — Git, Node.js, Python, the Playwright MCP server, and optionally the GitHub CLI and Graphviz — and installs what is missing after you confirm each item. Windows only.
 
 Update with `/plugin marketplace update smax-skills`, then `/reload-plugins`. If you develop on the plugin yourself, use the local source from [§6.2](#62-setting-up-the-dev-machine) instead.
 
