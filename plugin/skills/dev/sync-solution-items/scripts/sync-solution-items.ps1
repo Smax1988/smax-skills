@@ -108,7 +108,10 @@ $onDisk = @(
 # ignore files, negations and the global excludes all come for free. No git, no
 # repo, or a git that fails: the filter is skipped rather than guessed at.
 if ($onDisk.Count -gt 0 -and (Get-Command git -ErrorAction SilentlyContinue)) {
-    $ignoredOutput = ($onDisk -join "`n") | & git -C $RepoRoot check-ignore --stdin 2>$null
+    # The trailing LF is load-bearing: PowerShell appends CRLF to a string piped
+    # into a native program, and without it the last path reaches git as
+    # "docs/x.md`r" and never matches.
+    $ignoredOutput = (($onDisk -join "`n") + "`n") | & git -C $RepoRoot check-ignore --stdin 2>$null
     # 0 = some path is ignored, 1 = none are. Anything else (128: not a repo)
     # means the answer is unusable and nothing gets filtered.
     if ($LASTEXITCODE -le 1) {
@@ -240,3 +243,6 @@ try { $xml.Save($writer) } finally { $writer.Dispose() }
 if ($trailingNewline) { [IO.File]::AppendAllText($SolutionPath, $newLine) }
 
 Write-Host "$([IO.Path]::GetFileName($SolutionPath)) aktualisiert: $($added.Count) hinzugefuegt, $($removed.Count) entfernt, $($script:createdFolders.Count) Ordner angelegt."
+# Explicit, like every other way out: git check-ignore leaves $LASTEXITCODE at 1
+# when nothing is ignored, and a caller using '&' would read that as failure.
+exit 0

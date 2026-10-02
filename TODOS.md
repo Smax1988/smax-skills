@@ -531,7 +531,7 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       `Read()`-Regel in der eigenen `settings.json`.
 - [ ] **5.11** `sync-solution-items.ps1` lässt sich unter Windows PowerShell 5.1
       nicht parsen. Die Datei ist UTF-8 ohne BOM und enthält Gedankenstriche in
-      doppelt gequoteten Strings (Z. 61, 64, 220, 225); 5.1 liest sie als cp1252,
+      doppelt gequoteten Strings (Z. 61, 64, 223, 228); 5.1 liest sie als cp1252,
       und das Byte 0x94 beendet den String. Fertig, wenn das Skript ein
       `#Requires -Version 7` trägt (klare Meldung statt Parserfehler) oder die
       Striche durch ASCII ersetzt sind und es auch unter 5.1 parst.
@@ -541,3 +541,15 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       verschluckt den Fehler. Nicht ausprobiert, Standardverhalten von git.
       Fertig, wenn nur vorhandene Pfade übergeben werden und ein Test in einem
       Repo ohne `CONTEXT-MAP.md` den Commit vollständig zeigt.
+- [ ] **5.13** `sync-solution-items.ps1` trägt git-ignorierte Dateien mit
+      Nicht-ASCII-Zeichen im Pfad trotzdem in die `.slnx` ein. `git check-ignore`
+      gibt solche Pfade wegen `core.quotePath` gequotet und oktal maskiert aus
+      (`"docs/zz-\303\244.md"`), der Schlüssel trifft den Pfad aus `$onDisk`
+      dann nicht; die Meldung „uebersprungen: N" zählt die Datei dabei mit,
+      obwohl sie nicht gefiltert wird. Reproduziert am 02.10.2026 (pwsh 7,
+      `.gitignore` = `docs/zz-ignoriert-ä.md`). `git -c core.quotePath=false`
+      liefert den Pfad roh, macht das Ergebnis aber von
+      `[Console]::OutputEncoding` abhängig — im Test UTF-8, in einer
+      OEM-Konsole nicht geprüft. Fertig, wenn eine ignorierte Datei mit Umlaut
+      im Namen nicht eingetragen wird, auch bei OEM-Konsolen-Encoding, und die
+      gemeldete Zahl der tatsächlich gefilterten entspricht.
