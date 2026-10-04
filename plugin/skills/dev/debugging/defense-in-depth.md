@@ -6,6 +6,11 @@ When you fix a bug caused by invalid data, adding validation at one place feels 
 
 **Core principle:** Validate at EVERY layer data passes through. Make the bug structurally impossible.
 
+**Precondition:** a bug that actually occurred, and its root cause found. If
+the reported behavior never occurred because the code already prevents it,
+there is nothing to defend in depth — see *Exit: The Reported Behavior Is
+Already Prevented* in `SKILL.md`.
+
 ## Why Multiple Layers
 
 Single validation: "We fixed the bug"

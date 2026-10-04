@@ -45,6 +45,9 @@ Use for ANY technical issue:
 
 You MUST complete each phase before proceeding to the next.
 
+There is one exit: if Phase 1 shows the reported behavior is already
+prevented, the process ends after Phase 1. See the exit section right after it.
+
 ### Phase 1: Root Cause Investigation
 
 **BEFORE attempting ANY fix:**
@@ -60,6 +63,8 @@ You MUST complete each phase before proceeding to the next.
    - What are the exact steps?
    - Does it happen every time?
    - If not reproducible → gather more data, don't guess
+   - If the data shows code that blocks the reported path → see *Exit: The
+     Reported Behavior Is Already Prevented* below
 
 3. **Check Recent Changes**
    - What changed that could cause this?
@@ -116,6 +121,43 @@ You MUST complete each phase before proceeding to the next.
    - What called this with bad value?
    - Keep tracing up until you find the source
    - Fix at source, not at symptom
+
+### Exit: The Reported Behavior Is Already Prevented
+
+**Take this exit only when all three hold:**
+- You followed the path the report describes — the steps a user or caller
+  can actually take.
+- The reported behavior did not occur.
+- You can point at the code that stops it: file, line, and why it blocks
+  that path.
+
+"Can't reproduce, and I don't know why" is not this exit — gather more data.
+
+When all three hold, that is a result, not an incomplete investigation.
+Phases 2–4 do not apply: there is no defect to fix.
+
+**Report, change nothing:**
+1. The reproduction you attempted and what happened.
+2. The guard: file, line, and why it blocks the reported path.
+3. What you could not check — other entry points, a version or environment
+   you don't have.
+
+Then stop. No file changes.
+
+**None of these is a fix:**
+- Moving the guard "to where it belongs" — from display to state, from
+  caller to callee.
+- Adding a second guard "for defense in depth".
+- A failing test that reaches past the guard — calling an internal function
+  directly, setting state by hand. It shows the internals don't guard
+  themselves. It does not show the reported bug exists.
+
+If you think the guard sits in the wrong place or is too weak, say so in the
+report. Restructuring working code is a separate assignment, and your human
+partner decides whether it happens.
+
+If another path a user can actually take does produce the behavior, that is a
+reproduction — continue with Phase 2.
 
 ### Phase 2: Pattern Analysis
 
@@ -253,6 +295,10 @@ If you catch yourself thinking:
 | "Reference too long, I'll adapt the pattern" | Partial understanding guarantees bugs. Read it completely. |
 | "I see the problem, let me fix it" | Seeing symptoms ≠ understanding root cause. |
 | "One more fix attempt" (after 2+ failures) | 3+ failures = architectural problem. Question pattern, don't fix again. |
+| "It doesn't reproduce, but the guard could be bypassed — I'll harden it" | No defect, no fix. Report the guard. Hardening is a new assignment. |
+| "The guard checks the display, it should check the state" | Maybe. Say so in the report. Moving a working guard is not debugging. |
+| "The guard sits at the symptom, fix at source" | There is no symptom. "Fix at source" applies to a defect that occurs. |
+| "My test fails, so the defect is confirmed" | Only if the test takes the reported path. A test that reaches past the guard confirms nothing. |
 
 ## Quick Reference
 
@@ -264,6 +310,10 @@ If you catch yourself thinking:
 | **4. Implementation** | Create test, fix, verify | Bug resolved, tests pass |
 
 ## When Process Reveals "No Root Cause"
+
+This section is for behavior that does occur. If it doesn't occur because the
+code already prevents it, take the exit after Phase 1 instead — nothing here
+applies.
 
 If systematic investigation reveals issue is truly environmental, timing-dependent, or external:
 

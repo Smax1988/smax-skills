@@ -494,6 +494,42 @@ zwei von zwei Läufen mit einem Wegwerf-Command, vor und nach dem Umbau aus
       wenn §7 den Fall der zurückgehaltenen Zeile benennt und ein Lauf mit einem
       neuen Command-Skill keinen unausführbaren `[j/n]`-Eintrag mehr erzeugt.
 
+### 6.8 · `debugging`: der Ausgang „already prevented" greift bei Haiku nicht
+
+**Der Fall:** Ein gemeldeter Fehler, den der Code längst abfängt (Benchmark-Aufgabe
+A02). Richtig wäre: Schutz melden, nichts ändern.
+Seit `0029` hat `debugging` dafür einen Ausgang nach Phase 1. Ein Mikrotest am
+04.10.2026 hat keine Wirkung gezeigt. Sonnet ändert nichts, mit und ohne den
+Ausgang (je 5/5). Haiku ändert mit beiden Fassungen (alt 0/5, neu 0/4 gültige
+Läufe). Er baut die Prüfung von der Anzeige auf den Spielzustand um.
+
+**Warum der Ausgang nicht greift (aus den Mitschriften):** Haiku erklärt „Die
+Sperre prüft die Anzeige statt den Zustand" schon zur Root Cause, bevor ein
+Reproduktionsversuch fertig ist. Damit ist er gedanklich in Phase 4, und der
+Ausgang nach Phase 1 kommt nie zur Sprache. Ein Lauf hat den Ausgang erkannt
+und ihn dann wieder geöffnet, wegen einer Stelle (`computerSetSymbol`), die er
+nur aus dem Code gefolgert und nie beobachtet hat.
+
+**Vorschlag, noch nicht getestet:**
+
+- Eine Schranke am Eingang von Phase 4, dort, wo gehandelt wird: „Phase 4 setzt
+  voraus, dass du das gemeldete Verhalten hast auftreten sehen. Hast du das
+  nicht, bist du nicht in Phase 4."
+- Im Ausgang „does produce the behavior" zu „you observed it happen, not
+  inferred it from code" schärfen.
+
+**Vor dem nächsten Mikrotest beachten:**
+
+- Keine Datei, die den Test beschreibt, im Repo-Wurzelverzeichnis ablegen.
+  Subagenten sehen sie über den Git-Status, und ein Lauf hat sie gelesen.
+- Browser-Läufe nicht parallel fahren. Sie teilen sich eine Playwright-Instanz
+  und stören sich gegenseitig (abbrechende Server, fremde Ports).
+
+- [ ] **6.8.1** Schranke und Schärfung einbauen, dann 5 Haiku-Läufe nacheinander
+      gegen A02. Erledigt ist es, wenn Haiku mehrheitlich nichts ändert, oder
+      wenn belegt ist, dass Text in der Skill das nicht erreicht. Dann gehört
+      die Erkenntnis nach `0029`.
+
 ---
 
 ## 5 · Kleinkram

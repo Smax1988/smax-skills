@@ -89,7 +89,6 @@ adaptations above. If one of these files changes, `sync-plugin-docs` reports it.
 | `test-driven-development/writing-good-tests.md` | `skills/test-driven-development/writing-good-tests.md` |
 | `verification-before-completion/SKILL.md` | `skills/verification-before-completion/SKILL.md` |
 | `debugging/root-cause-tracing.md` | `skills/systematic-debugging/root-cause-tracing.md` |
-| `debugging/defense-in-depth.md` | `skills/systematic-debugging/defense-in-depth.md` |
 | `debugging/condition-based-waiting.md` | `skills/systematic-debugging/condition-based-waiting.md` |
 | `debugging/condition-based-waiting-example.ts` | `skills/systematic-debugging/condition-based-waiting-example.ts` |
 | `debugging/find-polluter.sh` | `skills/systematic-debugging/find-polluter.sh` |
@@ -115,6 +114,7 @@ Upstream text at the core, locally confined insertions.
 | `executing-plans/SKILL.md` | `skills/executing-plans/SKILL.md` | Superseded note in favour of `subagent-driven-development`; cold-start case added: the plan is found rather than assumed (`0016`) |
 | `writing-plans/plan-document-reviewer-prompt.md` | `skills/writing-plans/plan-document-reviewer-prompt.md` | Read from disk instead of from memory; the last message *is* the report; executable plan claims are executed (`0012`); terminology authority is checked |
 | `writing-specs/spec-document-reviewer-prompt.md` | `skills/brainstorming/spec-document-reviewer-prompt.md` | One-shot without a name (`0007`); read from disk; glossary and decision **placement** are checked, not just the content |
+| `debugging/defense-in-depth.md` | `skills/systematic-debugging/defense-in-depth.md` | Precondition added: only after a bug that actually occurred and its root cause was found; points to the "already prevented" exit (`0029`) |
 
 ### Substantially rebuilt
 
@@ -124,7 +124,7 @@ Upstream text at the core, locally confined insertions.
 | `code-review/code-reviewer.md` | `skills/requesting-code-review/code-reviewer.md` | Decision check in the reviewer (`0005`); English identifiers against the glossary; **mutation probe for guards** — a green test run only proves a guard once the suite turns red without it (`0009`) |
 | `writing-plans/SKILL.md` | `skills/writing-plans/SKILL.md` | Glossary gate on `CONTEXT.md`; binding of the relevant decisions in the `Global Constraints` block; `## Before Landing` as the close of every plan, with a resolved path to the reviewer template (`0017`). Roughly a third of the file is own text |
 | `brainstorming/SKILL.md` | `skills/brainstorming/SKILL.md` | Decision read site as step 1, before any draft (`0005`); glossary HARD-GATE with rationalisation table; document type SPEC/ANALYSIS is named instead of asked; spec steps 6–9 are out and live in `writing-specs`. 45−/81+ against v6.2.0 |
-| `debugging/SKILL.md` | `skills/systematic-debugging/SKILL.md` | New section *"When the Root Cause Is a Broken Decision"*: if the code contradicts a decision, that contradiction **is** the cause — not the crash one was chasing (`0005`) |
+| `debugging/SKILL.md` | `skills/systematic-debugging/SKILL.md` | New section *"When the Root Cause Is a Broken Decision"*: if the code contradicts a decision, that contradiction **is** the cause — not the crash one was chasing (`0005`). New exit after Phase 1, *"Exit: The Reported Behavior Is Already Prevented"*: report the guard, change nothing; *"No Root Cause"* scoped to behavior that occurs (`0029`) |
 | `finishing-a-development-branch/SKILL.md` | `skills/finishing-a-development-branch/SKILL.md` | Boiled down, review gate and squash landing added |
 | `writing-specs/SKILL.md` | Extract from `skills/brainstorming/SKILL.md` (steps 6–9) | Rewritten as a standalone skill (`0003`) |
 | `subagent-driven-development/SKILL.md` | `skills/subagent-driven-development/SKILL.md` | Per-task task reviewer removed: the gate is the implementer's self-check plus the controller's report check. A task reviewer only on `DONE_WITH_CONCERNS` about correctness or scope. Fix loop switched to controller verification, final review strengthened, ledger keeps the workspace until landing (`0006`, `0014`) |
