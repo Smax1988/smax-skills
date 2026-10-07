@@ -29,8 +29,7 @@ with the old and the new text alike (5/5 each). Haiku changed it with both
 discarded). Haiku decides that "the guard checks the display, not the state"
 is the root cause before the exit section ever comes up, or takes the exit and
 then reopens it on a code path it only inferred. The section is kept because
-it states what was missing and costs nothing where it is not needed. The next
-step is open in `TODOS.md` 6.8.
+it states what was missing and costs nothing where it is not needed.
 
 **Consequence:** a run that finds the reported behavior already prevented ends
 after Phase 1 with a report. Restructuring a working guard is a separate
