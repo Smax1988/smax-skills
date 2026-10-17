@@ -293,7 +293,7 @@ Mostly derived from **superpowers** and reworked. Which file comes from where an
 | find-beer-deals | `<beer> [ZIP/town]` | Command |
 | whats-for-lunch | — | Command |
 | nano-vs-colors | — | Command |
-| lap-training | `[minutes] \| simulation \| status` | Command |
+| lap-training | `[core\|all] [minutes] \| simulation \| status [core\|all]` | Command |
 
 ### repo-local — this repo only
 

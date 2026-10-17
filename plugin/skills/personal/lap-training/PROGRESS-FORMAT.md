@@ -83,7 +83,11 @@ problem, and the rules can change later without invalidating the history.
 Prüfungstermin: 2026-10-27
 Standarddauer: 45 Minuten
 Simulation: wöchentlich ab 2026-08-31
+Umfang: all
 ```
+
+`Umfang` is the default scope, `all` or `core` — see `SKILL.md` § *Scope*. An
+argument overrides it for one session; a missing line means `all`.
 
 ## `PROFILE.md`
 

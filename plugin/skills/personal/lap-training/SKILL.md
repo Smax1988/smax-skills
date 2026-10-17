@@ -2,7 +2,7 @@
 name: lap-training
 description: Drill the user for the oral exam (Fachgespräch) of the Austrian apprenticeship exam "Applikationsentwicklung - Coding".
 disable-model-invocation: true
-argument-hint: "[minutes] | simulation | status"
+argument-hint: "[core|all] [minutes] | simulation | status [core|all]"
 ---
 
 The user is preparing for the **Fachgespräch** of their Lehrabschlussprüfung
@@ -35,7 +35,8 @@ along the way, question by question. Never edit `log.md` retroactively.
 If `progress.md` is missing, this is the first session. Then, before anything
 else:
 
-1. Ask for the exam date and write `CONFIG.md`.
+1. Ask for the exam date and write `CONFIG.md`. `Umfang` is the scope argument
+   of this invocation, `all` if none was given.
 2. Ask three questions for `PROFILE.md`: which employer, which stack, which
    project. Board members love asking against the candidate's own practice —
    use this to pick examples, never to skip topics.
@@ -45,16 +46,19 @@ else:
 
 ## Session flow
 
-Argument is the number of minutes; ask if absent. `simulation` and `status` are
-separate modes, see below.
+Arguments are the scope (`core` or `all`, see **Scope**) and the number of
+minutes, in either order; ask for the minutes if absent. `simulation` and
+`status` are separate modes, see below.
 
 1. Read `CONFIG.md`, `PROFILE.md`, `progress.md` and `log.md`. If `progress.md`
    does not account for every row in `log.md`, rebuild it from `log.md` before
    anything else — that is what an aborted session leaves behind.
 2. Write the header line of `progress.md` (today's date, session count raised by
-   one) now, not at the end. Report in two lines: days to the exam, box
-   distribution, how many questions never asked.
-3. Pick questions (see **Selection**). Roughly one question per 2 minutes.
+   one) now, not at the end. Report in two lines: scope, days to the exam, box
+   distribution, how many questions never asked — box distribution and
+   never-asked count for the questions in scope.
+3. Pick questions (see **Selection**) from the questions in scope. Roughly one
+   question per 2 minutes.
 4. Read only the chapter files the picked questions live in.
 5. Per question: ask → let the user answer → at most one follow-up → grade,
    short feedback → **write both files before asking the next question**: append
@@ -211,7 +215,33 @@ invoke `smax:teach` yourself**: it is user-only as well, and it opens a stateful
 workspace of its own that has no business being started from inside an exam
 session.
 
+## Scope
+
+Which questions a session draws from. Two values:
+
+- **`all`** — every question in `questions/*.md`.
+- **`core`** — the three focus areas programming, databases and networking:
+  - chapters `06`, `15`, `16` and `17` in full
+  - from chapter `11`: `11-12`, `11-13` (data structures), `11-17` to `11-21`
+    (frames, web services, SOAP, REST, JSON), `11-28` (database access from
+    code), `11-38`, `11-39` (KISS/DRY, coding standards)
+
+  75 questions. This list is the only definition of `core`; it is kept by ID,
+  because the focus areas cut across chapter boundaries.
+
+The argument wins for this session only. Without one, `Umfang` in `CONFIG.md`
+applies; without that line, `all`. The scope never changes boxes, the log or
+`progress.md` — a question keeps its record whichever scope it was asked under,
+and switching back to `all` resumes exactly where the record stands.
+
+`core` narrows the training, not the exam: the board still asks the whole
+catalogue. That is the user's call to make, and the skill does not argue it —
+but it does not hide the cost either, see **Endgame**.
+
 ## Selection
+
+Everything below applies to the questions in scope; questions outside it are
+neither drawn nor counted.
 
 Every question sits in a box. Box 0 = never asked, 1 = rot, 5 = grün.
 
@@ -229,11 +259,13 @@ still counted as never asked.
 
 **Weights** — box 1: 16, box 2: 8, box 3: 4, box 4: 2, box 5: 1. Multiply by
 `1 + days_since_last_asked / 14`, capped at ×3. Draw weighted at random, no
-question twice per session, at most 3 per chapter so a session stays mixed.
+question twice per session, and keep a session mixed: under `all` at most 3
+per chapter; under `core`, whose five chapters cannot fill a long session at 3
+each, at most an even share of the session per chapter, plus one.
 
 **First pass** — while box-0 questions exist, fill two thirds of each session
-from them. That covers all 228 in roughly three weeks and leaves the rest of
-the time for repetition.
+from them. Under `all` that covers all 228 in roughly three weeks and leaves the
+rest of the time for repetition.
 
 **Reach of the upper boxes** — box 5 takes three grade-3 answers to the same
 question, and the weights deliberately spend the sessions on the weak ones
@@ -247,6 +279,11 @@ weighting: every question must have been asked at least once in the final three
 weeks, box 1 and 2 twice. Say plainly if the remaining sessions no longer add
 up.
 
+Under `core` the rule covers the questions in scope, and nothing is forced
+outside it. But every session in the endgame opens with one more line: how
+many questions outside `core` have not been asked in the final three weeks.
+One line, no recommendation — the number is the warning.
+
 ## Simulation mode
 
 Invoked as `simulation`. Runs the real thing: 20 minutes, mixed chapters, no
@@ -254,13 +291,18 @@ feedback between questions, follow-ups as a board member would, evaluation only
 at the end. Weight towards boxes 3-5 — this measures the exam, it does not
 train the gaps.
 
+Always `all`, whatever the argument or `CONFIG.md` says: the board does not
+know about `core`, and a simulation that does measures something else.
+
 Worth doing once a week from the fourth week on. Log the grades like any other
 session, marked `sim`.
 
 ## Status mode
 
-Invoked as `status`. No questions asked: box distribution per chapter, which
-chapters are weakest, days and sessions left, whether coverage still adds up.
+Invoked as `status`, optionally with a scope. No questions asked: box
+distribution per chapter, which chapters are weakest, days and sessions left,
+whether coverage still adds up — all of it for the questions in scope, resolved
+as in **Scope**.
 
 ## Formats
 
