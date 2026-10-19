@@ -46,7 +46,7 @@
 **Themenpunkt:** 15.7 Ablauf der Programmentwicklung
 **Frage:** Welche Schritte durchläuft der Code, bis ein lauffähiges Programm entsteht?
 **Muss:** Quellcode schreiben → übersetzen (compilieren oder interpretieren) → linken → ausführen → testen → debuggen
-**Sicher:** der Compiler erzeugt aus dem Quellcode Objektcode, der Linker bindet Objektdateien und Bibliotheken zum ausführbaren Programm zusammen · Syntaxfehler stoppen bereits die Übersetzung, Logikfehler fallen erst beim Testen auf · bei interpretierten Sprachen entfällt der eigene Übersetzungsschritt, der Fehler zeigt sich zur Laufzeit · der Zyklus wiederholt sich, Entwicklung ist nicht linear
+**Sicher:** der Compiler erzeugt aus dem Quellcode Objektcode, der Linker bindet Objektdateien und Bibliotheken zum ausführbaren Programm zusammen · Syntaxfehler stoppen bereits die Übersetzung, Logikfehler fallen erst beim Testen auf · bei interpretierten Sprachen entfällt der eigene Übersetzungsschritt, der Fehler zeigt sich zur Laufzeit · der Zyklus wiederholt sich, Entwicklung ist nicht linear · in .NET gibt es keinen klassischen Linker: der C#-Compiler erzeugt IL-Code in einer Assembly, Referenzen lädt die CLR zur Laufzeit, der JIT übersetzt in Maschinencode — der Linker-Schritt gilt für C/C++
 **Nachhaken bei:** Linken vergessen oder Syntax- und Logikfehler nicht unterschieden
 
 ### 15-08 · Aufbau einer Programmiersprache
@@ -130,7 +130,7 @@
 **Themenpunkt:** 15.19 Kenntnisse über Verzweigungen und Fallunterscheidungen
 **Frage:** Welche Möglichkeiten der Verzweigung gibt es?
 **Muss:** `if` / `else if` / `else` für Bedingungsprüfungen · `switch` / `case` für die Fallunterscheidung anhand mehrerer möglicher Werte einer Variablen
-**Sicher:** der ternäre Operator `Bedingung ? WertWahr : WertFalsch` als Kurzform für einfache Zuweisungen · `switch` ist bei vielen festen Werten lesbarer als eine lange if-Kette, funktioniert aber nur auf diskreten Werten, nicht auf Bereichen · `default` als Auffangzweig, `break` gegen ungewolltes Durchfallen in den nächsten Fall · Verzweigungen lassen sich verschachteln, tiefe Verschachtelung ist aber ein Warnzeichen
+**Sicher:** der ternäre Operator `Bedingung ? WertWahr : WertFalsch` als Kurzform für einfache Zuweisungen · `switch` ist bei vielen festen Werten lesbarer als eine lange if-Kette, das klassische `switch` (C, Java) funktioniert nur auf diskreten Werten, in modernem C# gehen über Pattern Matching auch Bereiche (`case > 100:`, `switch`-Ausdruck) · `default` als Auffangzweig, `break` gegen ungewolltes Durchfallen in den nächsten Fall — in C# ist Durchfallen ohnehin ein Compilerfehler · Verzweigungen lassen sich verschachteln, tiefe Verschachtelung ist aber ein Warnzeichen
 **Nachhaken bei:** nur `if` genannt, `switch` fehlt
 
 ### 15-20 · Objektorientierte Programmierung

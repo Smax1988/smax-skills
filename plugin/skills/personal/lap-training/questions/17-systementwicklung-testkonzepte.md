@@ -32,7 +32,7 @@
 **Themenpunkt:** 17.5 Unterschiede zwischen Call-By-Value und Call-By-Reference
 **Frage:** Was ist der Unterschied zwischen Call by Value und Call by Reference?
 **Muss:** Call by Value: eine Kopie des Wertes wird übergeben, Änderungen in der Funktion wirken sich nicht auf das Original aus · Call by Reference: es wird ein Verweis auf das Original übergeben, Änderungen wirken sich dort aus
-**Sicher:** Call by Value ist sicherer, weil das Original geschützt bleibt; Call by Reference spart das Kopieren großer Strukturen und erlaubt mehrere Rückgaben · typisch: primitive Datentypen by Value, Objekte und Arrays by Reference · in Java und C# wird formal immer der Wert übergeben — bei Objekten aber der Wert der Referenz, weshalb Änderungen am Objekt trotzdem außen sichtbar sind · genau daraus entstehen die typischen Überraschungen
+**Sicher:** Call by Value ist sicherer, weil das Original geschützt bleibt; Call by Reference spart das Kopieren großer Strukturen und erlaubt mehrere Rückgaben · typisch: primitive Datentypen by Value, bei Objekten und Arrays wird die Referenz übergeben · in Java und C# wird formal immer der Wert übergeben — bei Objekten aber der Wert der Referenz, weshalb Änderungen am Objekt außen sichtbar sind, eine neue Zuweisung des Parameters aber nicht · genau daraus entstehen die typischen Überraschungen · echtes Call by Reference in C# über `ref`, `out`, `in`
 **Nachhaken bei:** Definitionen richtig, aber ohne Beispiel, welche Typen wie übergeben werden
 
 ### 17-06 · Aufbau einer Klasse

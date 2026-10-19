@@ -88,7 +88,7 @@
 **Themenpunkt:** 16.13 Kenntnisse über Sicherungsmethoden
 **Frage:** Wie sichern Sie eine Datenbank?
 **Muss:** Logisches Backup: Export als SQL-Dump · physisches Backup: Kopie der Datenbankdateien · dazu inkrementelle Sicherung nur der Änderungen
-**Sicher:** logisch: portabel, auch auf eine andere Version oder ein anderes System einspielbar, dafür langsam bei großen Beständen (`mysqldump`) · physisch: schnell, aber die Datenbank muss angehalten sein oder es braucht Werkzeuge für den laufenden Betrieb · Transaktionsprotokolle erlauben die Wiederherstellung auf einen genauen Zeitpunkt · Rücksicherung regelmäßig testen · Sicherung nicht auf demselben Server ablegen
+**Sicher:** logisch: portabel, auch auf eine andere Version oder ein anderes System einspielbar, dafür langsam bei großen Beständen (`mysqldump`) · physisch: schnell, aber die Datenbank muss angehalten sein oder es braucht Werkzeuge für den laufenden Betrieb · Transaktionsprotokolle erlauben die Wiederherstellung auf einen genauen Zeitpunkt · Rücksicherung regelmäßig testen · Sicherung nicht auf demselben Server ablegen · SQL Server unterscheidet vollständige, differenzielle (seit der letzten Vollsicherung) und Transaktionsprotokoll-Sicherung, `BACKUP DATABASE` läuft online ohne Anhalten der Datenbank
 **Nachhaken bei:** „Dump machen" ohne physische Sicherung oder ohne Restore-Test
 
 ### 16-14 · Sperren
